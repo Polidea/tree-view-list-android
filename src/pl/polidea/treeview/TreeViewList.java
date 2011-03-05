@@ -18,4 +18,8 @@ public class TreeViewList extends ListView {
         super(context, attrs, defStyle);
     }
 
+    public void setAdapter(final TreeViewListAdapter adapter) {
+        super.setAdapter(adapter);
+    }
+
 }
