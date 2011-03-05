@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+	<pl.polidea.treeview.TreeViewListItemIndicator android:layout_width="wrap_content"
+		android:layout_height="fill_parent" android:layout_weight="0">
+	</pl.polidea.treeview.TreeViewListItemIndicator>
+	<FrameLayout android:id="@+id/treeview_list_item_wrapper" android:layout_width="fill_parent"
+		android:layout_height="fill_parent" android:layout_weight="1">
+	</FrameLayout>
+</LinearLayout>
