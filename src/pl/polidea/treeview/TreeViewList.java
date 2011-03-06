@@ -81,6 +81,11 @@ public class TreeViewList extends ListView {
             throw new RuntimeException("The adapter is not of TreeViewAdapter type");
         }
         treeAdapter = (TreeViewAdapter< ? >) adapter;
+        syncAdapter();
+        super.setAdapter(treeAdapter);
+    }
+
+    private void syncAdapter() {
         treeAdapter.setCollapsedDrawable(collapsedDrawable);
         treeAdapter.setExpandedDrawable(expandedDrawable);
         treeAdapter.setIndicatorGravity(indicatorGravity);
@@ -88,42 +93,96 @@ public class TreeViewList extends ListView {
         treeAdapter.setIndicatorBackgroundDrawable(indicatorBackgroundDrawable);
         treeAdapter.setRowBackgroundDrawable(rowBackgroundDrawable);
         treeAdapter.setCollapsible(collapsible);
-        super.setAdapter(treeAdapter);
     }
 
     public void setExpandedDrawable(final Drawable expandedDrawable) {
         this.expandedDrawable = expandedDrawable;
+        syncAdapter();
         treeAdapter.refresh();
     }
 
     public void setCollapsedDrawable(final Drawable collapsedDrawable) {
         this.collapsedDrawable = collapsedDrawable;
+        syncAdapter();
         treeAdapter.refresh();
     }
 
     public void setRowBackgroundDrawable(final Drawable rowBackgroundDrawable) {
         this.rowBackgroundDrawable = rowBackgroundDrawable;
+        syncAdapter();
         treeAdapter.refresh();
     }
 
     public void setIndicatorBackgroundDrawable(final Drawable indicatorBackgroundDrawable) {
         this.indicatorBackgroundDrawable = indicatorBackgroundDrawable;
+        syncAdapter();
         treeAdapter.refresh();
     }
 
     public void setIndentWidth(final int indentWidth) {
         this.indentWidth = indentWidth;
+        syncAdapter();
         treeAdapter.refresh();
     }
 
     public void setIndicatorGravity(final int indicatorGravity) {
         this.indicatorGravity = indicatorGravity;
+        syncAdapter();
         treeAdapter.refresh();
     }
 
     public void setCollapsible(final boolean collapsible) {
         this.collapsible = collapsible;
+        syncAdapter();
         treeAdapter.refresh();
+    }
+
+    public static ColorDrawable getDefaultColorDrawable() {
+        return DEFAULT_COLOR_DRAWABLE;
+    }
+
+    public static int getDefaultCollapsedResource() {
+        return DEFAULT_COLLAPSED_RESOURCE;
+    }
+
+    public static int getDefaultExpandedResource() {
+        return DEFAULT_EXPANDED_RESOURCE;
+    }
+
+    public static int getDefaultIndent() {
+        return DEFAULT_INDENT;
+    }
+
+    public static int getDefaultGravity() {
+        return DEFAULT_GRAVITY;
+    }
+
+    public Drawable getExpandedDrawable() {
+        return expandedDrawable;
+    }
+
+    public Drawable getCollapsedDrawable() {
+        return collapsedDrawable;
+    }
+
+    public Drawable getRowBackgroundDrawable() {
+        return rowBackgroundDrawable;
+    }
+
+    public Drawable getIndicatorBackgroundDrawable() {
+        return indicatorBackgroundDrawable;
+    }
+
+    public int getIndentWidth() {
+        return indentWidth;
+    }
+
+    public int getIndicatorGravity() {
+        return indicatorGravity;
+    }
+
+    public boolean isCollapsible() {
+        return collapsible;
     }
 
 }

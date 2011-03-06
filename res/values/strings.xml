@@ -7,6 +7,8 @@
     <string name="fancy_menu_condensed">Fancy</string>
     <string name="expand_all_menu">Expand all</string>
     <string name="expand_all_condensed">Expand All</string>
-    <string name="collapsible_menu">Collapsible</string>
-    <string name="collapsible_condensed">Collapsible</string>
+    <string name="collapsible_menu_enable">Enable collapsible</string>
+    <string name="collapsible_condensed_enable">Enable collapsible</string>
+    <string name="collapsible_menu_disable">Disable collapsible</string>
+    <string name="collapsible_condensed_disable">Disable collapsible</string>
 </resources>
