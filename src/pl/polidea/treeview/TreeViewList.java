@@ -100,7 +100,6 @@ public class TreeViewList extends ListView {
         treeAdapter.setIndicatorBackgroundDrawable(indicatorBackgroundDrawable);
         treeAdapter.setRowBackgroundDrawable(rowBackgroundDrawable);
         treeAdapter.setCollapsible(collapsible);
-        treeAdapter.setHandleTrackballPress(handleTrackballPress);
         if (handleTrackballPress) {
             setOnItemClickListener(new OnItemClickListener() {
                 @Override

@@ -22,9 +22,6 @@ import android.widget.ListAdapter;
  *            class for ID of the tree
  */
 public abstract class AbstractTreeViewAdapter<T> implements ListAdapter {
-
-    private static final String TAG = AbstractTreeViewAdapter.class
-            .getSimpleName();
     private final TreeStateManager<T> treeStateManager;
     private final int numberOfLevels;
     private final LayoutInflater layoutInflater;
@@ -46,7 +43,6 @@ public abstract class AbstractTreeViewAdapter<T> implements ListAdapter {
     };
 
     private boolean collapsible;
-    private boolean handleTrackballPress;
     private final Activity activity;
 
     public Activity getActivity() {
@@ -300,10 +296,6 @@ public abstract class AbstractTreeViewAdapter<T> implements ListAdapter {
 
     public void refresh() {
         treeStateManager.refresh();
-    }
-
-    public void setHandleTrackballPress(final boolean handleTrackballPress) {
-        this.handleTrackballPress = handleTrackballPress;
     }
 
     private int getIndentWidth() {

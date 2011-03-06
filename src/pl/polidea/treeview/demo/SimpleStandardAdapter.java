@@ -89,13 +89,13 @@ class SimpleStandardAdapter extends AbstractTreeViewAdapter<Long> {
     public void handleItemClick(final View view, final Object id) {
         final Long longId = (Long) id;
         final TreeNodeInfo<Long> info = getManager().getNodeInfo(longId);
-        if (!info.isWithChildren()) {
+        if (info.isWithChildren()) {
+            super.handleItemClick(view, id);
+        } else {
             final ViewGroup vg = (ViewGroup) view;
             final CheckBox cb = (CheckBox) vg
                     .findViewById(R.id.demo_list_checkbox);
             cb.performClick();
-        } else {
-            super.handleItemClick(view, id);
         }
     }
 
