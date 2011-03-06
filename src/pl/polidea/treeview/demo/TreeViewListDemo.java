@@ -10,7 +10,6 @@ import pl.polidea.treeview.TreeStateManager;
 import pl.polidea.treeview.TreeViewAdapter;
 import pl.polidea.treeview.TreeViewList;
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -25,9 +24,9 @@ import android.widget.TextView;
 
 public class TreeViewListDemo extends Activity {
     private final class FancyColouredVariousSizesAdapter extends TreeViewAdapter<Long> {
-        private FancyColouredVariousSizesAdapter(final Context context, final TreeStateManager<Long> treeStateManager,
-                final int numberOfLevels) {
-            super(context, treeStateManager, numberOfLevels);
+        private FancyColouredVariousSizesAdapter(final Activity activity,
+                final TreeStateManager<Long> treeStateManager, final int numberOfLevels) {
+            super(activity, treeStateManager, numberOfLevels);
         }
 
         @Override
@@ -69,9 +68,9 @@ public class TreeViewListDemo extends Activity {
     }
 
     private final class SimpleStandardAdapter extends TreeViewAdapter<Long> {
-        private SimpleStandardAdapter(final Context context, final TreeStateManager<Long> treeStateManager,
+        private SimpleStandardAdapter(final Activity activity, final TreeStateManager<Long> treeStateManager,
                 final int numberOfLevels) {
-            super(context, treeStateManager, numberOfLevels);
+            super(activity, treeStateManager, numberOfLevels);
         }
 
         @Override
@@ -129,7 +128,7 @@ public class TreeViewListDemo extends Activity {
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
         final MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.adapter_menu, menu);
+        inflater.inflate(R.menu.main_menu, menu);
         return true;
     }
 

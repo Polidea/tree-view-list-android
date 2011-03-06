@@ -11,4 +11,6 @@
     <string name="collapsible_condensed_enable">Enable collapsible</string>
     <string name="collapsible_menu_disable">Disable collapsible</string>
     <string name="collapsible_condensed_disable">Disable collapsible</string>
+    <string name="collapse_all_menu">Collapse all</string>
+    <string name="collapse_all_condesed">Collapse all</string>
 </resources>

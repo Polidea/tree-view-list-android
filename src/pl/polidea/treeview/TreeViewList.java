@@ -14,14 +14,16 @@ import android.widget.ListView;
  * Tree view, expandable multi-level.
  * 
  * 
- * @attr ref R.styleable#TreeViewList_indicator_expanded
- * @attr ref R.styleable#TreeViewList_indicator_collapsed
- * @attr ref R.styleable#TreeViewList_indicator_gravity
- * @attr ref R.styleable#TreeViewList_indicator_scaleType
- * @attr ref R.styleable#TreeViewList_indicator_background
- * @attr ref R.styleable#TreeViewList_row_background
+ * @attr ref pl.polidea.treeview.R.styleable#TreeViewList_collapsible
+ * @attr ref pl.polidea.treeview.R.styleable#TreeViewList_src_expanded
+ * @attr ref pl.polidea.treeview.R.styleable#TreeViewList_src_collapsed
+ * @attr ref pl.polidea.treeview.R.styleable#TreeViewList_indent_width
+ * @attr ref pl.polidea.treeview.R.styleable#TreeViewList_handle_trackball_press
+ * @attr ref pl.polidea.treeview.R.styleable#TreeViewList_handle_long_press
+ * @attr ref pl.polidea.treeview.R.styleable#TreeViewList_indicator_gravity
+ * @attr ref pl.polidea.treeview.R.styleable#TreeViewList_indicator_background
+ * @attr ref pl.polidea.treeview.R.styleable#TreeViewList_row_background
  * 
- * @param <T>
  */
 public class TreeViewList extends ListView {
 
@@ -38,6 +40,8 @@ public class TreeViewList extends ListView {
     private int indicatorGravity = 0;
     private TreeViewAdapter< ? > treeAdapter;
     private boolean collapsible;
+    private boolean handleTrackballPress;
+    private boolean handleLongPress;
 
     public TreeViewList(final Context context, final AttributeSet attrs) {
         this(context, attrs, R.style.treeViewListStyle);
@@ -93,6 +97,8 @@ public class TreeViewList extends ListView {
         treeAdapter.setIndicatorBackgroundDrawable(indicatorBackgroundDrawable);
         treeAdapter.setRowBackgroundDrawable(rowBackgroundDrawable);
         treeAdapter.setCollapsible(collapsible);
+        treeAdapter.setHandleTrackballPress(handleTrackballPress);
+        treeAdapter.setHandleLongPress(handleLongPress);
     }
 
     public void setExpandedDrawable(final Drawable expandedDrawable) {
@@ -133,6 +139,18 @@ public class TreeViewList extends ListView {
 
     public void setCollapsible(final boolean collapsible) {
         this.collapsible = collapsible;
+        syncAdapter();
+        treeAdapter.refresh();
+    }
+
+    public void setHandleTrackballPress(final boolean handleTrackballPress) {
+        this.handleTrackballPress = handleTrackballPress;
+        syncAdapter();
+        treeAdapter.refresh();
+    }
+
+    public void setHandleLongPress(final boolean handleLongPress) {
+        this.handleLongPress = handleLongPress;
         syncAdapter();
         treeAdapter.refresh();
     }
@@ -183,6 +201,14 @@ public class TreeViewList extends ListView {
 
     public boolean isCollapsible() {
         return collapsible;
+    }
+
+    public boolean isHandleTrackballPress() {
+        return handleTrackballPress;
+    }
+
+    public boolean isHandleLongPress() {
+        return handleLongPress;
     }
 
 }

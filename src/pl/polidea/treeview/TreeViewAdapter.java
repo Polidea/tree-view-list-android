@@ -1,14 +1,19 @@
 package pl.polidea.treeview;
 
+import android.app.Activity;
 import android.content.Context;
 import android.database.DataSetObserver;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnCreateContextMenuListener;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
@@ -45,7 +50,27 @@ public abstract class TreeViewAdapter<T> implements ListAdapter {
             expandCollapse(id);
         }
     };
+
+    private final OnCreateContextMenuListener onCreateContextMenuListener = new OnCreateContextMenuListener() {
+        @Override
+        public void onCreateContextMenu(final ContextMenu menu, final View v, final ContextMenuInfo menuInfo) {
+            @SuppressWarnings("unchecked")
+            final T id = (T) v.getTag();
+            final TreeNodeInfo<T> info = treeStateManager.getNodeInfo(id);
+            final MenuInflater menuInflater = activity.getMenuInflater();
+            menuInflater.inflate(R.menu.context_menu, menu);
+            if (info.isExpanded()) {
+                menu.findItem(R.id.context_menu_expand).setVisible(false);
+            } else {
+                menu.findItem(R.id.context_menu_collapse).setVisible(false);
+            }
+        }
+    };
+
     private boolean collapsible;
+    private boolean handleLongPress;
+    private boolean handleTrackballPress;
+    private final Activity activity;
 
     protected TreeStateManager<T> getManager() {
         return treeStateManager;
@@ -69,12 +94,13 @@ public abstract class TreeViewAdapter<T> implements ListAdapter {
                 collapsedDrawable.getIntrinsicWidth());
     }
 
-    public TreeViewAdapter(final Context context, final TreeStateManager<T> treeStateManager, final int numberOfLevels) {
+    public TreeViewAdapter(final Activity activity, final TreeStateManager<T> treeStateManager, final int numberOfLevels) {
+        this.activity = activity;
         this.treeStateManager = treeStateManager;
-        this.layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.layoutInflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.numberOfLevels = numberOfLevels;
-        this.collapsedDrawable = context.getResources().getDrawable(R.drawable.collapsed);
-        this.expandedDrawable = context.getResources().getDrawable(R.drawable.expanded);
+        this.collapsedDrawable = activity.getResources().getDrawable(R.drawable.collapsed);
+        this.expandedDrawable = activity.getResources().getDrawable(R.drawable.expanded);
         this.rowBackgroundDrawable = new ColorDrawable(Color.TRANSPARENT);
         this.indicatorBackgroundDrawable = new ColorDrawable(Color.TRANSPARENT);
         calculateIndentWidth();
@@ -200,8 +226,18 @@ public abstract class TreeViewAdapter<T> implements ListAdapter {
         image.setBackgroundDrawable(indicatorBackgroundDrawable);
         image.setScaleType(ScaleType.CENTER);
         image.setTag(nodeInfo.getId());
-        if (nodeInfo.isWithChildren()) {
+        if (nodeInfo.isWithChildren() && collapsible) {
             image.setOnClickListener(indicatorClickListener);
+        } else {
+            image.setOnClickListener(null);
+        }
+        layout.setTag(nodeInfo.getId());
+        if (nodeInfo.isWithChildren() && collapsible && handleLongPress) {
+            layout.setOnCreateContextMenuListener(onCreateContextMenuListener);
+            activity.registerForContextMenu(layout);
+        } else {
+            image.setOnCreateContextMenuListener(null);
+            activity.unregisterForContextMenu(layout);
         }
         final FrameLayout frameLayout = (FrameLayout) layout.findViewById(R.id.treeview_list_item_frame);
         final FrameLayout.LayoutParams childParams = new FrameLayout.LayoutParams(LayoutParams.FILL_PARENT,
@@ -261,4 +297,13 @@ public abstract class TreeViewAdapter<T> implements ListAdapter {
     public void refresh() {
         treeStateManager.refresh();
     }
+
+    public void setHandleTrackballPress(final boolean handleTrackballPress) {
+        this.handleTrackballPress = handleTrackballPress;
+    }
+
+    public void setHandleLongPress(final boolean handleLongPress) {
+        this.handleLongPress = handleLongPress;
+    }
+
 }
