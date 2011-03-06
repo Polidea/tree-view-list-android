@@ -3,17 +3,11 @@ package pl.polidea.treeview;
 import android.app.Activity;
 import android.content.Context;
 import android.database.DataSetObserver;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnCreateContextMenuListener;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
@@ -51,24 +45,7 @@ public abstract class TreeViewAdapter<T> implements ListAdapter {
         }
     };
 
-    private final OnCreateContextMenuListener onCreateContextMenuListener = new OnCreateContextMenuListener() {
-        @Override
-        public void onCreateContextMenu(final ContextMenu menu, final View v, final ContextMenuInfo menuInfo) {
-            @SuppressWarnings("unchecked")
-            final T id = (T) v.getTag();
-            final TreeNodeInfo<T> info = treeStateManager.getNodeInfo(id);
-            final MenuInflater menuInflater = activity.getMenuInflater();
-            menuInflater.inflate(R.menu.context_menu, menu);
-            if (info.isExpanded()) {
-                menu.findItem(R.id.context_menu_expand).setVisible(false);
-            } else {
-                menu.findItem(R.id.context_menu_collapse).setVisible(false);
-            }
-        }
-    };
-
     private boolean collapsible;
-    private boolean handleLongPress;
     private boolean handleTrackballPress;
     private final Activity activity;
 
@@ -90,8 +67,12 @@ public abstract class TreeViewAdapter<T> implements ListAdapter {
     }
 
     private void calculateIndentWidth() {
-        indentWidth = Math.max(Math.max(indentWidth, expandedDrawable.getIntrinsicWidth()),
-                collapsedDrawable.getIntrinsicWidth());
+        if (expandedDrawable != null) {
+            indentWidth = Math.max(indentWidth, expandedDrawable.getIntrinsicWidth());
+        }
+        if (collapsedDrawable != null) {
+            indentWidth = Math.max(indentWidth, collapsedDrawable.getIntrinsicWidth());
+        }
     }
 
     public TreeViewAdapter(final Activity activity, final TreeStateManager<T> treeStateManager, final int numberOfLevels) {
@@ -99,12 +80,10 @@ public abstract class TreeViewAdapter<T> implements ListAdapter {
         this.treeStateManager = treeStateManager;
         this.layoutInflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.numberOfLevels = numberOfLevels;
-        this.collapsedDrawable = activity.getResources().getDrawable(R.drawable.collapsed);
-        this.expandedDrawable = activity.getResources().getDrawable(R.drawable.expanded);
-        this.rowBackgroundDrawable = activity.getResources().getDrawable(android.R.drawable.list_selector_background);
-        this.indicatorBackgroundDrawable = activity.getResources().getDrawable(
-                android.R.drawable.list_selector_background);
-        calculateIndentWidth();
+        this.collapsedDrawable = null;
+        this.expandedDrawable = null;
+        this.rowBackgroundDrawable = null;
+        this.indicatorBackgroundDrawable = null;
     }
 
     @Override
@@ -213,10 +192,19 @@ public abstract class TreeViewAdapter<T> implements ListAdapter {
         return null;
     }
 
+    private Drawable getDrawableOrDefaultBackground(final Drawable r) {
+        if (r == null) {
+            return activity.getResources().getDrawable(android.R.drawable.list_selector_background).mutate();
+        } else {
+            return r;
+        }
+    }
+
     public final LinearLayout populateTreeItem(final LinearLayout layout, final View childView,
             final TreeNodeInfo<T> nodeInfo, final boolean newChildView) {
         final Drawable individualRowDrawable = getBackgroundDrawable(nodeInfo);
-        layout.setBackgroundDrawable(individualRowDrawable == null ? rowBackgroundDrawable : individualRowDrawable);
+        layout.setBackgroundDrawable(individualRowDrawable == null ? getDrawableOrDefaultBackground(rowBackgroundDrawable)
+                : individualRowDrawable);
         final LinearLayout.LayoutParams indicatorLayoutParams = new LinearLayout.LayoutParams(
                 calculateIndentation(nodeInfo), LayoutParams.FILL_PARENT);
         final LinearLayout indicatorLayout = (LinearLayout) layout.findViewById(R.id.treeview_list_item_image_layout);
@@ -224,7 +212,7 @@ public abstract class TreeViewAdapter<T> implements ListAdapter {
         indicatorLayout.setLayoutParams(indicatorLayoutParams);
         final ImageView image = (ImageView) layout.findViewById(R.id.treeview_list_item_image);
         image.setImageDrawable(getDrawable(nodeInfo));
-        image.setBackgroundDrawable(indicatorBackgroundDrawable);
+        image.setBackgroundDrawable(getDrawableOrDefaultBackground(indicatorBackgroundDrawable));
         image.setScaleType(ScaleType.CENTER);
         image.setTag(nodeInfo.getId());
         if (nodeInfo.isWithChildren() && collapsible) {
@@ -233,19 +221,18 @@ public abstract class TreeViewAdapter<T> implements ListAdapter {
             image.setOnClickListener(null);
         }
         layout.setTag(nodeInfo.getId());
-        if (nodeInfo.isWithChildren() && collapsible && handleLongPress) {
-            activity.registerForContextMenu(layout);
-            layout.setOnCreateContextMenuListener(onCreateContextMenuListener);
-        } else {
-            activity.unregisterForContextMenu(layout);
-            image.setOnCreateContextMenuListener(null);
-        }
         final FrameLayout frameLayout = (FrameLayout) layout.findViewById(R.id.treeview_list_item_frame);
         final FrameLayout.LayoutParams childParams = new FrameLayout.LayoutParams(LayoutParams.FILL_PARENT,
                 LayoutParams.FILL_PARENT);
         if (newChildView) {
             frameLayout.addView(childView, childParams);
         }
+
+        // if (handleLongPress && nodeInfo.isWithChildren()) {
+        // activity.registerForContextMenu(layout);
+        // } else {
+        // activity.unregisterForContextMenu(layout);
+        // }
         return layout;
     }
 
@@ -255,7 +242,7 @@ public abstract class TreeViewAdapter<T> implements ListAdapter {
 
     private Drawable getDrawable(final TreeNodeInfo<T> nodeInfo) {
         if (!nodeInfo.isWithChildren() || !collapsible) {
-            return new ColorDrawable(Color.TRANSPARENT);
+            return getDrawableOrDefaultBackground(indicatorBackgroundDrawable);
         }
         if (nodeInfo.isExpanded()) {
             return expandedDrawable;
@@ -301,10 +288,6 @@ public abstract class TreeViewAdapter<T> implements ListAdapter {
 
     public void setHandleTrackballPress(final boolean handleTrackballPress) {
         this.handleTrackballPress = handleTrackballPress;
-    }
-
-    public void setHandleLongPress(final boolean handleLongPress) {
-        this.handleLongPress = handleLongPress;
     }
 
 }

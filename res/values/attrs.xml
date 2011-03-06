@@ -6,7 +6,6 @@
 		<attr name="src_collapsed" format="reference|color" />
         <attr name="indent_width" format="dimension" />
         <attr name="handle_trackball_press" format="boolean" />
-        <attr name="handle_long_press" format="boolean" />
 		<attr name="indicator_gravity">
 			<!-- Push object to the top of its container, not changing its size. -->
 			<flag name="top" value="0x30" />

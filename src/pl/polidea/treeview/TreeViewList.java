@@ -2,8 +2,6 @@ package pl.polidea.treeview;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -26,8 +24,6 @@ import android.widget.ListView;
  * 
  */
 public class TreeViewList extends ListView {
-
-    private static final ColorDrawable DEFAULT_COLOR_DRAWABLE = new ColorDrawable(Color.TRANSPARENT);
     private static final int DEFAULT_COLLAPSED_RESOURCE = R.drawable.collapsed;
     private static final int DEFAULT_EXPANDED_RESOURCE = R.drawable.expanded;
     private static final int DEFAULT_INDENT = 0;
@@ -41,7 +37,6 @@ public class TreeViewList extends ListView {
     private TreeViewAdapter< ? > treeAdapter;
     private boolean collapsible;
     private boolean handleTrackballPress;
-    private boolean handleLongPress;
 
     public TreeViewList(final Context context, final AttributeSet attrs) {
         this(context, attrs, R.style.treeViewListStyle);
@@ -54,7 +49,6 @@ public class TreeViewList extends ListView {
     public TreeViewList(final Context context, final AttributeSet attrs, final int defStyle) {
         super(context, attrs, defStyle);
         parseAttributes(context, attrs, defStyle);
-        setClickable(true);
     }
 
     private void parseAttributes(final Context context, final AttributeSet attrs, final int defStyle) {
@@ -70,15 +64,8 @@ public class TreeViewList extends ListView {
         indentWidth = a.getDimensionPixelSize(R.styleable.TreeViewList_indent_width, DEFAULT_INDENT);
         indicatorGravity = a.getInteger(R.styleable.TreeViewList_indicator_gravity, DEFAULT_GRAVITY);
         indicatorBackgroundDrawable = a.getDrawable(R.styleable.TreeViewList_indicator_background);
-        if (indicatorBackgroundDrawable == null) {
-            indicatorBackgroundDrawable = DEFAULT_COLOR_DRAWABLE;
-        }
         rowBackgroundDrawable = a.getDrawable(R.styleable.TreeViewList_row_background);
-        if (rowBackgroundDrawable == null) {
-            rowBackgroundDrawable = DEFAULT_COLOR_DRAWABLE;
-        }
         collapsible = a.getBoolean(R.styleable.TreeViewList_collapsible, true);
-        handleLongPress = a.getBoolean(R.styleable.TreeViewList_handle_long_press, true);
         handleTrackballPress = a.getBoolean(R.styleable.TreeViewList_handle_trackball_press, true);
     }
 
@@ -101,7 +88,6 @@ public class TreeViewList extends ListView {
         treeAdapter.setRowBackgroundDrawable(rowBackgroundDrawable);
         treeAdapter.setCollapsible(collapsible);
         treeAdapter.setHandleTrackballPress(handleTrackballPress);
-        treeAdapter.setHandleLongPress(handleLongPress);
     }
 
     public void setExpandedDrawable(final Drawable expandedDrawable) {
@@ -152,32 +138,6 @@ public class TreeViewList extends ListView {
         treeAdapter.refresh();
     }
 
-    public void setHandleLongPress(final boolean handleLongPress) {
-        this.handleLongPress = handleLongPress;
-        syncAdapter();
-        treeAdapter.refresh();
-    }
-
-    public static ColorDrawable getDefaultColorDrawable() {
-        return DEFAULT_COLOR_DRAWABLE;
-    }
-
-    public static int getDefaultCollapsedResource() {
-        return DEFAULT_COLLAPSED_RESOURCE;
-    }
-
-    public static int getDefaultExpandedResource() {
-        return DEFAULT_EXPANDED_RESOURCE;
-    }
-
-    public static int getDefaultIndent() {
-        return DEFAULT_INDENT;
-    }
-
-    public static int getDefaultGravity() {
-        return DEFAULT_GRAVITY;
-    }
-
     public Drawable getExpandedDrawable() {
         return expandedDrawable;
     }
@@ -208,10 +168,6 @@ public class TreeViewList extends ListView {
 
     public boolean isHandleTrackballPress() {
         return handleTrackballPress;
-    }
-
-    public boolean isHandleLongPress() {
-        return handleLongPress;
     }
 
 }

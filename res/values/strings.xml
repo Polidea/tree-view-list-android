@@ -13,4 +13,6 @@
     <string name="collapsible_condensed_disable">Disable collapsible</string>
     <string name="collapse_all_menu">Collapse all</string>
     <string name="collapse_all_condesed">Collapse all</string>
+    <string name="expand_menu">Expand</string>
+    <string name="expand_menu_condensed">Expand</string>
 </resources>

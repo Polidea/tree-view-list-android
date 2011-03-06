@@ -17,10 +17,13 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -29,7 +32,7 @@ import android.widget.TextView;
 
 public class TreeViewListDemo extends Activity {
 
-    Set<Long> selected = new HashSet<Long>();
+    private final Set<Long> selected = new HashSet<Long>();
 
     private final class FancyColouredVariousSizesAdapter extends SimpleStandardAdapter {
         private FancyColouredVariousSizesAdapter(final Activity activity,
@@ -140,6 +143,7 @@ public class TreeViewListDemo extends Activity {
         fancyAdapter = new FancyColouredVariousSizesAdapter(this, manager, levelNumber);
         simpleAdapter = new SimpleStandardAdapter(this, manager, levelNumber);
         treeView.setAdapter(simpleAdapter);
+        registerForContextMenu(treeView);
     }
 
     @Override
@@ -184,5 +188,42 @@ public class TreeViewListDemo extends Activity {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public void onCreateContextMenu(final ContextMenu menu, final View v, final ContextMenuInfo menuInfo) {
+        final AdapterContextMenuInfo adapterInfo = (AdapterContextMenuInfo) menuInfo;
+        final long id = adapterInfo.id;
+        final TreeNodeInfo<Long> info = manager.getNodeInfo(id);
+        if (info.isWithChildren()) {
+            final MenuInflater menuInflater = getMenuInflater();
+            menuInflater.inflate(R.menu.context_menu, menu);
+            if (info.isExpanded()) {
+                menu.findItem(R.id.context_menu_expand_item).setVisible(false);
+                menu.findItem(R.id.context_menu_expand_all).setVisible(false);
+            } else {
+                menu.findItem(R.id.context_menu_collapse).setVisible(false);
+            }
+        }
+        super.onCreateContextMenu(menu, v, menuInfo);
+    }
+
+    @Override
+    public boolean onContextItemSelected(final MenuItem item) {
+        final AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+        final long id = info.id;
+        switch (item.getItemId()) {
+        case R.id.context_menu_collapse:
+            manager.collapseChildren(id);
+            return true;
+        case R.id.context_menu_expand_all:
+            manager.expandEverythingBelow(id);
+            return true;
+        case R.id.context_menu_expand_item:
+            manager.expandDirectChildren(id);
+            return true;
+        default:
+            return super.onContextItemSelected(item);
+        }
     }
 }
