@@ -37,6 +37,7 @@ public class TreeViewList extends ListView {
     private int indentWidth = 0;
     private int indicatorGravity = 0;
     private TreeViewAdapter< ? > treeAdapter;
+    private boolean collapsable;
 
     public TreeViewList(final Context context, final AttributeSet attrs) {
         this(context, attrs, R.style.treeViewListStyle);
@@ -71,6 +72,7 @@ public class TreeViewList extends ListView {
         if (rowBackgroundDrawable == null) {
             rowBackgroundDrawable = DEFAULT_COLOR_DRAWABLE;
         }
+        collapsable = a.getBoolean(R.styleable.TreeViewList_collapsable, true);
     }
 
     @Override
@@ -85,6 +87,7 @@ public class TreeViewList extends ListView {
         treeAdapter.setIndentWidth(indentWidth);
         treeAdapter.setIndicatorBackgroundDrawable(indicatorBackgroundDrawable);
         treeAdapter.setRowBackgroundDrawable(rowBackgroundDrawable);
+        treeAdapter.setCollapsable(collapsable);
         super.setAdapter(treeAdapter);
     }
 

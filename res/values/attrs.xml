@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<declare-styleable name="TreeViewList">
+	    <attr name="collapsable" format="boolean" />
 		<attr name="src_expanded" format="reference|color" />
 		<attr name="src_collapsed" format="reference|color" />
         <attr name="indent_width" format="dimension" />

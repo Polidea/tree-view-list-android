@@ -5,8 +5,10 @@ import android.database.DataSetObserver;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
@@ -23,6 +25,7 @@ import android.widget.ListAdapter;
  */
 public abstract class TreeViewAdapter<T> implements ListAdapter {
 
+    private static final String TAG = TreeViewAdapter.class.getSimpleName();
     private final TreeStateManager<T> treeStateManager;
     private final int numberOfLevels;
     private final LayoutInflater layoutInflater;
@@ -34,8 +37,29 @@ public abstract class TreeViewAdapter<T> implements ListAdapter {
     private Drawable indicatorBackgroundDrawable;
     private Drawable rowBackgroundDrawable;
 
+    private final OnClickListener indicatorClickListener = new OnClickListener() {
+        @Override
+        public void onClick(final View v) {
+            @SuppressWarnings("unchecked")
+            final T id = (T) v.getTag();
+            expandCollapse(id);
+        }
+    };
+    private boolean collapsable;
+
     protected TreeStateManager<T> getManager() {
         return treeStateManager;
+    }
+
+    protected void expandCollapse(final T id) {
+        final TreeNodeInfo<T> info = treeStateManager.getNodeInfo(id);
+        if (!info.isWithChildren()) {
+            Log.d(TAG, "The node " + id + " has no children, so there should be no expand/collapse events!");
+            return;
+        }
+        if (info.isExpanded()) {
+            treeStateManager.collapseChildren(id);
+        }
     }
 
     private void calculateIndentWidth() {
@@ -173,6 +197,10 @@ public abstract class TreeViewAdapter<T> implements ListAdapter {
         image.setImageDrawable(getDrawable(nodeInfo));
         image.setBackgroundDrawable(indicatorBackgroundDrawable);
         image.setScaleType(ScaleType.CENTER);
+        image.setTag(nodeInfo.getId());
+        if (nodeInfo.isWithChildren()) {
+            image.setOnClickListener(indicatorClickListener);
+        }
         final FrameLayout frameLayout = (FrameLayout) layout.findViewById(R.id.treeview_list_item_frame);
         final FrameLayout.LayoutParams childParams = new FrameLayout.LayoutParams(LayoutParams.FILL_PARENT,
                 LayoutParams.FILL_PARENT);
@@ -183,11 +211,11 @@ public abstract class TreeViewAdapter<T> implements ListAdapter {
     }
 
     protected int calculateIndentation(final TreeNodeInfo<T> nodeInfo) {
-        return indentWidth * (nodeInfo.getLevel() + 1);
+        return indentWidth * (nodeInfo.getLevel() + (collapsable ? 1 : 0));
     }
 
     private Drawable getDrawable(final TreeNodeInfo<T> nodeInfo) {
-        if (!nodeInfo.isWithChildren()) {
+        if (!nodeInfo.isWithChildren() || !collapsable) {
             return new ColorDrawable(Color.TRANSPARENT);
         }
         if (nodeInfo.isExpanded()) {
@@ -222,6 +250,10 @@ public abstract class TreeViewAdapter<T> implements ListAdapter {
 
     public void setIndicatorBackgroundDrawable(final Drawable indicatorBackgroundDrawable) {
         this.indicatorBackgroundDrawable = indicatorBackgroundDrawable;
+    }
+
+    public void setCollapsable(final boolean collapsable) {
+        this.collapsable = collapsable;
     }
 
 }
