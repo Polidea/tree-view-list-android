@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.database.DataSetObserver;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -61,10 +60,7 @@ public abstract class AbstractTreeViewAdapter<T> implements ListAdapter {
     protected void expandCollapse(final T id) {
         final TreeNodeInfo<T> info = treeStateManager.getNodeInfo(id);
         if (!info.isWithChildren()) {
-            Log.d(TAG,
-                    "The node "
-                            + id
-                            + " has no children, so there should be no expand/collapse events!");
+            // ignore - no default action
             return;
         }
         if (info.isExpanded()) {
@@ -251,12 +247,7 @@ public abstract class AbstractTreeViewAdapter<T> implements ListAdapter {
         if (newChildView) {
             frameLayout.addView(childView, childParams);
         }
-
-        // if (handleLongPress && nodeInfo.isWithChildren()) {
-        // activity.registerForContextMenu(layout);
-        // } else {
-        // activity.unregisterForContextMenu(layout);
-        // }
+        frameLayout.setTag(nodeInfo.getId());
         return layout;
     }
 
@@ -317,6 +308,11 @@ public abstract class AbstractTreeViewAdapter<T> implements ListAdapter {
 
     private int getIndentWidth() {
         return indentWidth;
+    }
+
+    @SuppressWarnings("unchecked")
+    public void handleItemClick(final View view, final Object id) {
+        expandCollapse((T) id);
     }
 
 }

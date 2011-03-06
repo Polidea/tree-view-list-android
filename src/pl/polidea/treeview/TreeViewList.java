@@ -5,6 +5,8 @@ import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.Gravity;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
@@ -17,7 +19,6 @@ import android.widget.ListView;
  * attr ref pl.polidea.treeview.R.styleable#TreeViewList_src_collapsed
  * attr ref pl.polidea.treeview.R.styleable#TreeViewList_indent_width
  * attr ref pl.polidea.treeview.R.styleable#TreeViewList_handle_trackball_press
- * attr ref pl.polidea.treeview.R.styleable#TreeViewList_handle_long_press
  * attr ref pl.polidea.treeview.R.styleable#TreeViewList_indicator_gravity
  * attr ref pl.polidea.treeview.R.styleable#TreeViewList_indicator_background
  * attr ref pl.polidea.treeview.R.styleable#TreeViewList_row_background
@@ -100,6 +101,18 @@ public class TreeViewList extends ListView {
         treeAdapter.setRowBackgroundDrawable(rowBackgroundDrawable);
         treeAdapter.setCollapsible(collapsible);
         treeAdapter.setHandleTrackballPress(handleTrackballPress);
+        if (handleTrackballPress) {
+            setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClick(final AdapterView< ? > parent,
+                        final View view, final int position, final long id) {
+                    treeAdapter.handleItemClick(view, view.getTag());
+                }
+            });
+        } else {
+            setOnClickListener(null);
+        }
+
     }
 
     public void setExpandedDrawable(final Drawable expandedDrawable) {

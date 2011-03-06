@@ -8,6 +8,7 @@ import pl.polidea.treeview.R;
 import pl.polidea.treeview.TreeNodeInfo;
 import pl.polidea.treeview.TreeStateManager;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -28,13 +29,18 @@ class SimpleStandardAdapter extends AbstractTreeViewAdapter<Long> {
         public void onCheckedChanged(final CompoundButton buttonView,
                 final boolean isChecked) {
             final Long id = (Long) buttonView.getTag();
-            if (isChecked) {
-                selected.add(id);
-            } else {
-                selected.remove(id);
-            }
+            changeSelected(isChecked, id);
         }
+
     };
+
+    private void changeSelected(final boolean isChecked, final Long id) {
+        if (isChecked) {
+            selected.add(id);
+        } else {
+            selected.remove(id);
+        }
+    }
 
     public SimpleStandardAdapter(final TreeViewListDemo treeViewListDemo,
             final Set<Long> selected,
@@ -77,6 +83,20 @@ class SimpleStandardAdapter extends AbstractTreeViewAdapter<Long> {
         }
         box.setOnCheckedChangeListener(onCheckedChange);
         return viewLayout;
+    }
+
+    @Override
+    public void handleItemClick(final View view, final Object id) {
+        final Long longId = (Long) id;
+        final TreeNodeInfo<Long> info = getManager().getNodeInfo(longId);
+        if (!info.isWithChildren()) {
+            final ViewGroup vg = (ViewGroup) view;
+            final CheckBox cb = (CheckBox) vg
+                    .findViewById(R.id.demo_list_checkbox);
+            cb.performClick();
+        } else {
+            super.handleItemClick(view, id);
+        }
     }
 
     @Override
