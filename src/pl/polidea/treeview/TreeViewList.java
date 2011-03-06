@@ -35,7 +35,7 @@ public class TreeViewList extends ListView {
     private Drawable indicatorBackgroundDrawable;
     private int indentWidth = 0;
     private int indicatorGravity = 0;
-    private TreeViewAdapter< ? > treeAdapter;
+    private AbstractTreeViewAdapter< ? > treeAdapter;
     private boolean collapsible;
     private boolean handleTrackballPress;
 
@@ -50,11 +50,10 @@ public class TreeViewList extends ListView {
     public TreeViewList(final Context context, final AttributeSet attrs,
             final int defStyle) {
         super(context, attrs, defStyle);
-        parseAttributes(context, attrs, defStyle);
+        parseAttributes(context, attrs);
     }
 
-    private void parseAttributes(final Context context,
-            final AttributeSet attrs, final int defStyle) {
+    private void parseAttributes(final Context context, final AttributeSet attrs) {
         final TypedArray a = context.obtainStyledAttributes(attrs,
                 R.styleable.TreeViewList);
         expandedDrawable = a.getDrawable(R.styleable.TreeViewList_src_expanded);
@@ -83,11 +82,11 @@ public class TreeViewList extends ListView {
 
     @Override
     public void setAdapter(final ListAdapter adapter) {
-        if (!(adapter instanceof TreeViewAdapter)) {
-            throw new RuntimeException(
+        if (!(adapter instanceof AbstractTreeViewAdapter)) {
+            throw new TreeConfigurationException(
                     "The adapter is not of TreeViewAdapter type");
         }
-        treeAdapter = (TreeViewAdapter< ? >) adapter;
+        treeAdapter = (AbstractTreeViewAdapter< ? >) adapter;
         syncAdapter();
         super.setAdapter(treeAdapter);
     }

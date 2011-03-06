@@ -102,13 +102,17 @@ public class TreeBuilder<T> {
      * @param level
      *            should always be parent's level + 1
      */
-    private void addNodeToParentOneLevelDown(final T parent, final T id, final int level) {
+    private void addNodeToParentOneLevelDown(final T parent, final T id,
+            final int level) {
         if (parent == null && level != 0) {
-            throw new RuntimeException("Trying to add new id " + id + " to top level with level != 0 (" + level + ")");
+            throw new TreeConfigurationException("Trying to add new id " + id
+                    + " to top level with level != 0 (" + level + ")");
         }
         if (parent != null && manager.getLevel(parent) != level - 1) {
-            throw new RuntimeException("Trying to add new id " + id + " <" + level + "> to " + parent + " <"
-                    + manager.getLevel(parent) + ">. The difference in levels up is bigger than 1.");
+            throw new TreeConfigurationException("Trying to add new id " + id
+                    + " <" + level + "> to " + parent + " <"
+                    + manager.getLevel(parent)
+                    + ">. The difference in levels up is bigger than 1.");
         }
         manager.addAfterChild(parent, id, null);
         setLastAdded(id, level);

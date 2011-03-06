@@ -74,10 +74,10 @@ public class InMemoryTreeStateManager<T> implements TreeStateManager<T> {
         final InMemoryTreeNode<T> node = getNodeFromTreeOrThrow(id);
         final List<InMemoryTreeNode<T>> children = node.getChildren();
         boolean expanded = false;
-        if (children.size() > 0 && children.get(0).isVisible()) {
+        if (!children.isEmpty() && children.get(0).isVisible()) {
             expanded = true;
         }
-        return new TreeNodeInfo<T>(id, node.getLevel(), children.size() > 0,
+        return new TreeNodeInfo<T>(id, node.getLevel(), !children.isEmpty(),
                 node.isVisible(), expanded);
     }
 
@@ -96,10 +96,10 @@ public class InMemoryTreeStateManager<T> implements TreeStateManager<T> {
     private boolean getChildrenVisibility(final InMemoryTreeNode<T> node) {
         boolean visibility;
         final List<InMemoryTreeNode<T>> children = node.getChildren();
-        if (children.size() > 0) {
-            visibility = children.get(0).isVisible();
-        } else {
+        if (children.isEmpty()) {
             visibility = visibleByDefault;
+        } else {
+            visibility = children.get(0).isVisible();
         }
         return visibility;
     }
@@ -269,7 +269,7 @@ public class InMemoryTreeStateManager<T> implements TreeStateManager<T> {
             return null;
         }
         final List<InMemoryTreeNode<T>> children = node.getChildren();
-        if (children.size() > 0) {
+        if (!children.isEmpty()) {
             final InMemoryTreeNode<T> firstChild = children.get(0);
             if (firstChild.isVisible()) {
                 return firstChild.getId();

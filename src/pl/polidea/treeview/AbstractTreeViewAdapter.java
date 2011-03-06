@@ -22,9 +22,10 @@ import android.widget.ListAdapter;
  * @param <T>
  *            class for ID of the tree
  */
-public abstract class TreeViewAdapter<T> implements ListAdapter {
+public abstract class AbstractTreeViewAdapter<T> implements ListAdapter {
 
-    private static final String TAG = TreeViewAdapter.class.getSimpleName();
+    private static final String TAG = AbstractTreeViewAdapter.class
+            .getSimpleName();
     private final TreeStateManager<T> treeStateManager;
     private final int numberOfLevels;
     private final LayoutInflater layoutInflater;
@@ -48,6 +49,10 @@ public abstract class TreeViewAdapter<T> implements ListAdapter {
     private boolean collapsible;
     private boolean handleTrackballPress;
     private final Activity activity;
+
+    public Activity getActivity() {
+        return activity;
+    }
 
     protected TreeStateManager<T> getManager() {
         return treeStateManager;
@@ -80,7 +85,7 @@ public abstract class TreeViewAdapter<T> implements ListAdapter {
         }
     }
 
-    public TreeViewAdapter(final Activity activity,
+    public AbstractTreeViewAdapter(final Activity activity,
             final TreeStateManager<T> treeStateManager, final int numberOfLevels) {
         this.activity = activity;
         this.treeStateManager = treeStateManager;
@@ -122,7 +127,7 @@ public abstract class TreeViewAdapter<T> implements ListAdapter {
     }
 
     @Override
-    public boolean hasStableIds() {
+    public boolean hasStableIds() { // NOPMD
         return true;
     }
 
@@ -142,12 +147,12 @@ public abstract class TreeViewAdapter<T> implements ListAdapter {
     }
 
     @Override
-    public boolean areAllItemsEnabled() {
+    public boolean areAllItemsEnabled() { // NOPMD
         return true;
     }
 
     @Override
-    public boolean isEnabled(final int position) {
+    public boolean isEnabled(final int position) { // NOPMD
         return true;
     }
 
@@ -201,7 +206,7 @@ public abstract class TreeViewAdapter<T> implements ListAdapter {
      * @return drawable returned as background for the whole row. Might be null,
      *         then default background is used
      */
-    public Drawable getBackgroundDrawable(final TreeNodeInfo<T> treeNodeInfo) {
+    public Drawable getBackgroundDrawable(final TreeNodeInfo<T> treeNodeInfo) { // NOPMD
         return null;
     }
 
