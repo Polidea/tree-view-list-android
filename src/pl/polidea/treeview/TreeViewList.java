@@ -11,23 +11,24 @@ import android.widget.ListView;
 /**
  * Tree view, expandable multi-level.
  * 
- * 
- * @attr ref pl.polidea.treeview.R.styleable#TreeViewList_collapsible
- * @attr ref pl.polidea.treeview.R.styleable#TreeViewList_src_expanded
- * @attr ref pl.polidea.treeview.R.styleable#TreeViewList_src_collapsed
- * @attr ref pl.polidea.treeview.R.styleable#TreeViewList_indent_width
- * @attr ref pl.polidea.treeview.R.styleable#TreeViewList_handle_trackball_press
- * @attr ref pl.polidea.treeview.R.styleable#TreeViewList_handle_long_press
- * @attr ref pl.polidea.treeview.R.styleable#TreeViewList_indicator_gravity
- * @attr ref pl.polidea.treeview.R.styleable#TreeViewList_indicator_background
- * @attr ref pl.polidea.treeview.R.styleable#TreeViewList_row_background
- * 
+ * <pre>
+ * attr ref pl.polidea.treeview.R.styleable#TreeViewList_collapsible
+ * attr ref pl.polidea.treeview.R.styleable#TreeViewList_src_expanded
+ * attr ref pl.polidea.treeview.R.styleable#TreeViewList_src_collapsed
+ * attr ref pl.polidea.treeview.R.styleable#TreeViewList_indent_width
+ * attr ref pl.polidea.treeview.R.styleable#TreeViewList_handle_trackball_press
+ * attr ref pl.polidea.treeview.R.styleable#TreeViewList_handle_long_press
+ * attr ref pl.polidea.treeview.R.styleable#TreeViewList_indicator_gravity
+ * attr ref pl.polidea.treeview.R.styleable#TreeViewList_indicator_background
+ * attr ref pl.polidea.treeview.R.styleable#TreeViewList_row_background
+ * </pre>
  */
 public class TreeViewList extends ListView {
     private static final int DEFAULT_COLLAPSED_RESOURCE = R.drawable.collapsed;
     private static final int DEFAULT_EXPANDED_RESOURCE = R.drawable.expanded;
     private static final int DEFAULT_INDENT = 0;
-    private static final int DEFAULT_GRAVITY = Gravity.LEFT | Gravity.CENTER_VERTICAL;
+    private static final int DEFAULT_GRAVITY = Gravity.LEFT
+            | Gravity.CENTER_VERTICAL;
     private Drawable expandedDrawable;
     private Drawable collapsedDrawable;
     private Drawable rowBackgroundDrawable;
@@ -46,33 +47,45 @@ public class TreeViewList extends ListView {
         this(context, null);
     }
 
-    public TreeViewList(final Context context, final AttributeSet attrs, final int defStyle) {
+    public TreeViewList(final Context context, final AttributeSet attrs,
+            final int defStyle) {
         super(context, attrs, defStyle);
         parseAttributes(context, attrs, defStyle);
     }
 
-    private void parseAttributes(final Context context, final AttributeSet attrs, final int defStyle) {
-        final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.TreeViewList);
+    private void parseAttributes(final Context context,
+            final AttributeSet attrs, final int defStyle) {
+        final TypedArray a = context.obtainStyledAttributes(attrs,
+                R.styleable.TreeViewList);
         expandedDrawable = a.getDrawable(R.styleable.TreeViewList_src_expanded);
         if (expandedDrawable == null) {
-            expandedDrawable = context.getResources().getDrawable(DEFAULT_EXPANDED_RESOURCE);
+            expandedDrawable = context.getResources().getDrawable(
+                    DEFAULT_EXPANDED_RESOURCE);
         }
-        collapsedDrawable = a.getDrawable(R.styleable.TreeViewList_src_collapsed);
+        collapsedDrawable = a
+                .getDrawable(R.styleable.TreeViewList_src_collapsed);
         if (collapsedDrawable == null) {
-            collapsedDrawable = context.getResources().getDrawable(DEFAULT_COLLAPSED_RESOURCE);
+            collapsedDrawable = context.getResources().getDrawable(
+                    DEFAULT_COLLAPSED_RESOURCE);
         }
-        indentWidth = a.getDimensionPixelSize(R.styleable.TreeViewList_indent_width, DEFAULT_INDENT);
-        indicatorGravity = a.getInteger(R.styleable.TreeViewList_indicator_gravity, DEFAULT_GRAVITY);
-        indicatorBackgroundDrawable = a.getDrawable(R.styleable.TreeViewList_indicator_background);
-        rowBackgroundDrawable = a.getDrawable(R.styleable.TreeViewList_row_background);
+        indentWidth = a.getDimensionPixelSize(
+                R.styleable.TreeViewList_indent_width, DEFAULT_INDENT);
+        indicatorGravity = a.getInteger(
+                R.styleable.TreeViewList_indicator_gravity, DEFAULT_GRAVITY);
+        indicatorBackgroundDrawable = a
+                .getDrawable(R.styleable.TreeViewList_indicator_background);
+        rowBackgroundDrawable = a
+                .getDrawable(R.styleable.TreeViewList_row_background);
         collapsible = a.getBoolean(R.styleable.TreeViewList_collapsible, true);
-        handleTrackballPress = a.getBoolean(R.styleable.TreeViewList_handle_trackball_press, true);
+        handleTrackballPress = a.getBoolean(
+                R.styleable.TreeViewList_handle_trackball_press, true);
     }
 
     @Override
     public void setAdapter(final ListAdapter adapter) {
         if (!(adapter instanceof TreeViewAdapter)) {
-            throw new RuntimeException("The adapter is not of TreeViewAdapter type");
+            throw new RuntimeException(
+                    "The adapter is not of TreeViewAdapter type");
         }
         treeAdapter = (TreeViewAdapter< ? >) adapter;
         syncAdapter();
@@ -108,7 +121,8 @@ public class TreeViewList extends ListView {
         treeAdapter.refresh();
     }
 
-    public void setIndicatorBackgroundDrawable(final Drawable indicatorBackgroundDrawable) {
+    public void setIndicatorBackgroundDrawable(
+            final Drawable indicatorBackgroundDrawable) {
         this.indicatorBackgroundDrawable = indicatorBackgroundDrawable;
         syncAdapter();
         treeAdapter.refresh();

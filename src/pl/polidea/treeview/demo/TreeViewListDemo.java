@@ -30,28 +30,41 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+//CSOFF: FinalClassCheck
+
+/**
+ * Demo activity showing how the tree view can be used.
+ * 
+ */
 public class TreeViewListDemo extends Activity {
 
     private final Set<Long> selected = new HashSet<Long>();
 
-    private final class FancyColouredVariousSizesAdapter extends SimpleStandardAdapter {
+    private final class FancyColouredVariousSizesAdapter extends
+            SimpleStandardAdapter {
         private FancyColouredVariousSizesAdapter(final Activity activity,
-                final TreeStateManager<Long> treeStateManager, final int numberOfLevels) {
+                final TreeStateManager<Long> treeStateManager,
+                final int numberOfLevels) {
             super(activity, treeStateManager, numberOfLevels);
         }
 
         @Override
-        public LinearLayout updateView(final View view, final TreeNodeInfo<Long> treeNodeInfo) {
-            final LinearLayout viewLayout = super.updateView(view, treeNodeInfo);
-            final TextView descriptionView = (TextView) viewLayout.findViewById(R.id.demo_list_item_description);
-            final TextView levelView = (TextView) viewLayout.findViewById(R.id.demo_list_item_level);
+        public LinearLayout updateView(final View view,
+                final TreeNodeInfo<Long> treeNodeInfo) {
+            final LinearLayout viewLayout = super
+                    .updateView(view, treeNodeInfo);
+            final TextView descriptionView = (TextView) viewLayout
+                    .findViewById(R.id.demo_list_item_description);
+            final TextView levelView = (TextView) viewLayout
+                    .findViewById(R.id.demo_list_item_level);
             descriptionView.setTextSize(20 - 2 * treeNodeInfo.getLevel());
             levelView.setTextSize(20 - 2 * treeNodeInfo.getLevel());
             return viewLayout;
         }
 
         @Override
-        public Drawable getBackgroundDrawable(final TreeNodeInfo<Long> treeNodeInfo) {
+        public Drawable getBackgroundDrawable(
+                final TreeNodeInfo<Long> treeNodeInfo) {
             switch (treeNodeInfo.getLevel()) {
             case 0:
                 return new ColorDrawable(Color.WHITE);
@@ -65,27 +78,38 @@ public class TreeViewListDemo extends Activity {
         }
     }
 
+    /**
+     * This is a very simple adapter that provides very basic tree view with a
+     * checkboxes and simple item description.
+     * 
+     */
     private class SimpleStandardAdapter extends TreeViewAdapter<Long> {
 
-        private SimpleStandardAdapter(final Activity activity, final TreeStateManager<Long> treeStateManager,
+        private SimpleStandardAdapter(final Activity activity,
+                final TreeStateManager<Long> treeStateManager,
                 final int numberOfLevels) {
             super(activity, treeStateManager, numberOfLevels);
         }
 
         @Override
         public View getNewChildView(final TreeNodeInfo<Long> treeNodeInfo) {
-            final LinearLayout viewLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.demo_list_item, null);
+            final LinearLayout viewLayout = (LinearLayout) getLayoutInflater()
+                    .inflate(R.layout.demo_list_item, null);
             return updateView(viewLayout, treeNodeInfo);
         }
 
         @Override
-        public LinearLayout updateView(final View view, final TreeNodeInfo<Long> treeNodeInfo) {
+        public LinearLayout updateView(final View view,
+                final TreeNodeInfo<Long> treeNodeInfo) {
             final LinearLayout viewLayout = (LinearLayout) view;
-            final TextView descriptionView = (TextView) viewLayout.findViewById(R.id.demo_list_item_description);
-            final TextView levelView = (TextView) viewLayout.findViewById(R.id.demo_list_item_level);
+            final TextView descriptionView = (TextView) viewLayout
+                    .findViewById(R.id.demo_list_item_description);
+            final TextView levelView = (TextView) viewLayout
+                    .findViewById(R.id.demo_list_item_level);
             descriptionView.setText(getDescription(treeNodeInfo.getId()));
             levelView.setText("" + treeNodeInfo.getLevel());
-            final CheckBox box = (CheckBox) viewLayout.findViewById(R.id.demo_list_checkbox);
+            final CheckBox box = (CheckBox) viewLayout
+                    .findViewById(R.id.demo_list_checkbox);
             box.setTag(treeNodeInfo.getId());
             if (treeNodeInfo.isWithChildren()) {
                 box.setVisibility(View.GONE);
@@ -105,7 +129,8 @@ public class TreeViewListDemo extends Activity {
 
     private final OnCheckedChangeListener onCheckedChange = new OnCheckedChangeListener() {
         @Override
-        public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
+        public void onCheckedChanged(final CompoundButton buttonView,
+                final boolean isChecked) {
             final Long id = (Long) buttonView.getTag();
             if (isChecked) {
                 selected.add(id);
@@ -118,9 +143,9 @@ public class TreeViewListDemo extends Activity {
     private static final String TAG = TreeViewListDemo.class.getSimpleName();
     private TreeViewList treeView;
 
-    private static final int[] demoNodes = new int[] { 0, 0, 1, 1, 1, 2, 2, 1, 1, 2, 1, 0, 0, 0, 1, 2, 3, 2, 0, 0, 1,
-            2, 0, 1, 2, 0, 1 };
-    private static final int levelNumber = 4;
+    private static final int[] DEMO_NODES = new int[] { 0, 0, 1, 1, 1, 2, 2, 1,
+            1, 2, 1, 0, 0, 0, 1, 2, 3, 2, 0, 0, 1, 2, 0, 1, 2, 0, 1 };
+    private static final int LEVEL_NUMBER = 4;
     private final TreeStateManager<Long> manager = new InMemoryTreeStateManager<Long>();
     private final TreeBuilder<Long> treeBuilder = new TreeBuilder<Long>(manager);
     private FancyColouredVariousSizesAdapter fancyAdapter;
@@ -135,13 +160,14 @@ public class TreeViewListDemo extends Activity {
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        for (int i = 0; i < demoNodes.length; i++) {
-            treeBuilder.sequentiallyAddNextNode((long) i, demoNodes[i]);
+        for (int i = 0; i < DEMO_NODES.length; i++) {
+            treeBuilder.sequentiallyAddNextNode((long) i, DEMO_NODES[i]);
         }
         Log.d(TAG, manager.toString());
         treeView = (TreeViewList) findViewById(R.id.mainTreeView);
-        fancyAdapter = new FancyColouredVariousSizesAdapter(this, manager, levelNumber);
-        simpleAdapter = new SimpleStandardAdapter(this, manager, levelNumber);
+        fancyAdapter = new FancyColouredVariousSizesAdapter(this, manager,
+                LEVEL_NUMBER);
+        simpleAdapter = new SimpleStandardAdapter(this, manager, LEVEL_NUMBER);
         treeView.setAdapter(simpleAdapter);
         registerForContextMenu(treeView);
     }
@@ -155,13 +181,16 @@ public class TreeViewListDemo extends Activity {
 
     @Override
     public boolean onPrepareOptionsMenu(final Menu menu) {
-        final MenuItem collapsibleMenu = menu.findItem(R.id.collapsible_menu_item);
+        final MenuItem collapsibleMenu = menu
+                .findItem(R.id.collapsible_menu_item);
         if (treeView.isCollapsible()) {
             collapsibleMenu.setTitle(R.string.collapsible_menu_disable);
-            collapsibleMenu.setTitleCondensed(getResources().getString(R.string.collapsible_condensed_disable));
+            collapsibleMenu.setTitleCondensed(getResources().getString(
+                    R.string.collapsible_condensed_disable));
         } else {
             collapsibleMenu.setTitle(R.string.collapsible_menu_enable);
-            collapsibleMenu.setTitleCondensed(getResources().getString(R.string.collapsible_condensed_enable));
+            collapsibleMenu.setTitleCondensed(getResources().getString(
+                    R.string.collapsible_condensed_enable));
         }
         return super.onPrepareOptionsMenu(menu);
     }
@@ -191,7 +220,8 @@ public class TreeViewListDemo extends Activity {
     }
 
     @Override
-    public void onCreateContextMenu(final ContextMenu menu, final View v, final ContextMenuInfo menuInfo) {
+    public void onCreateContextMenu(final ContextMenu menu, final View v,
+            final ContextMenuInfo menuInfo) {
         final AdapterContextMenuInfo adapterInfo = (AdapterContextMenuInfo) menuInfo;
         final long id = adapterInfo.id;
         final TreeNodeInfo<Long> info = manager.getNodeInfo(id);
@@ -210,7 +240,8 @@ public class TreeViewListDemo extends Activity {
 
     @Override
     public boolean onContextItemSelected(final MenuItem item) {
-        final AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+        final AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
+                .getMenuInfo();
         final long id = info.id;
         switch (item.getItemId()) {
         case R.id.context_menu_collapse:

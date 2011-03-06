@@ -29,7 +29,7 @@ public abstract class TreeViewAdapter<T> implements ListAdapter {
     private final int numberOfLevels;
     private final LayoutInflater layoutInflater;
 
-    protected int indentWidth = 0;
+    private int indentWidth = 0;
     private int indicatorGravity = 0;
     private Drawable collapsedDrawable;
     private Drawable expandedDrawable;
@@ -56,7 +56,10 @@ public abstract class TreeViewAdapter<T> implements ListAdapter {
     protected void expandCollapse(final T id) {
         final TreeNodeInfo<T> info = treeStateManager.getNodeInfo(id);
         if (!info.isWithChildren()) {
-            Log.d(TAG, "The node " + id + " has no children, so there should be no expand/collapse events!");
+            Log.d(TAG,
+                    "The node "
+                            + id
+                            + " has no children, so there should be no expand/collapse events!");
             return;
         }
         if (info.isExpanded()) {
@@ -68,17 +71,21 @@ public abstract class TreeViewAdapter<T> implements ListAdapter {
 
     private void calculateIndentWidth() {
         if (expandedDrawable != null) {
-            indentWidth = Math.max(indentWidth, expandedDrawable.getIntrinsicWidth());
+            setIndentWidth(Math.max(getIndentWidth(),
+                    expandedDrawable.getIntrinsicWidth()));
         }
         if (collapsedDrawable != null) {
-            indentWidth = Math.max(indentWidth, collapsedDrawable.getIntrinsicWidth());
+            setIndentWidth(Math.max(getIndentWidth(),
+                    collapsedDrawable.getIntrinsicWidth()));
         }
     }
 
-    public TreeViewAdapter(final Activity activity, final TreeStateManager<T> treeStateManager, final int numberOfLevels) {
+    public TreeViewAdapter(final Activity activity,
+            final TreeStateManager<T> treeStateManager, final int numberOfLevels) {
         this.activity = activity;
         this.treeStateManager = treeStateManager;
-        this.layoutInflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.layoutInflater = (LayoutInflater) activity
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.numberOfLevels = numberOfLevels;
         this.collapsedDrawable = null;
         this.expandedDrawable = null;
@@ -145,14 +152,18 @@ public abstract class TreeViewAdapter<T> implements ListAdapter {
     }
 
     @Override
-    public final View getView(final int position, final View convertView, final ViewGroup parent) {
+    public final View getView(final int position, final View convertView,
+            final ViewGroup parent) {
         final TreeNodeInfo<T> nodeInfo = getTreeNodeInfo(position);
         if (convertView == null) {
-            final LinearLayout layout = (LinearLayout) layoutInflater.inflate(R.layout.tree_list_item_wrapper, null);
-            return populateTreeItem(layout, getNewChildView(nodeInfo), nodeInfo, true);
+            final LinearLayout layout = (LinearLayout) layoutInflater.inflate(
+                    R.layout.tree_list_item_wrapper, null);
+            return populateTreeItem(layout, getNewChildView(nodeInfo),
+                    nodeInfo, true);
         } else {
             final LinearLayout linear = (LinearLayout) convertView;
-            final FrameLayout frameLayout = (FrameLayout) linear.findViewById(R.id.treeview_list_item_frame);
+            final FrameLayout frameLayout = (FrameLayout) linear
+                    .findViewById(R.id.treeview_list_item_frame);
             final View childView = frameLayout.getChildAt(0);
             updateView(childView, nodeInfo);
             return populateTreeItem(linear, childView, nodeInfo, false);
@@ -174,8 +185,10 @@ public abstract class TreeViewAdapter<T> implements ListAdapter {
      * can also create a new view, which will mean that the old view will not be
      * reused.
      * 
+     * @param view
+     *            view that should be updated with the new values
      * @param treeNodeInfo
-     *            node info
+     *            node info used to populate the view
      * @return view to used as row indented content
      */
     public abstract View updateView(View view, TreeNodeInfo<T> treeNodeInfo);
@@ -194,23 +207,28 @@ public abstract class TreeViewAdapter<T> implements ListAdapter {
 
     private Drawable getDrawableOrDefaultBackground(final Drawable r) {
         if (r == null) {
-            return activity.getResources().getDrawable(android.R.drawable.list_selector_background).mutate();
+            return activity.getResources()
+                    .getDrawable(android.R.drawable.list_selector_background)
+                    .mutate();
         } else {
             return r;
         }
     }
 
-    public final LinearLayout populateTreeItem(final LinearLayout layout, final View childView,
-            final TreeNodeInfo<T> nodeInfo, final boolean newChildView) {
+    public final LinearLayout populateTreeItem(final LinearLayout layout,
+            final View childView, final TreeNodeInfo<T> nodeInfo,
+            final boolean newChildView) {
         final Drawable individualRowDrawable = getBackgroundDrawable(nodeInfo);
         layout.setBackgroundDrawable(individualRowDrawable == null ? getDrawableOrDefaultBackground(rowBackgroundDrawable)
                 : individualRowDrawable);
         final LinearLayout.LayoutParams indicatorLayoutParams = new LinearLayout.LayoutParams(
                 calculateIndentation(nodeInfo), LayoutParams.FILL_PARENT);
-        final LinearLayout indicatorLayout = (LinearLayout) layout.findViewById(R.id.treeview_list_item_image_layout);
+        final LinearLayout indicatorLayout = (LinearLayout) layout
+                .findViewById(R.id.treeview_list_item_image_layout);
         indicatorLayout.setGravity(indicatorGravity);
         indicatorLayout.setLayoutParams(indicatorLayoutParams);
-        final ImageView image = (ImageView) layout.findViewById(R.id.treeview_list_item_image);
+        final ImageView image = (ImageView) layout
+                .findViewById(R.id.treeview_list_item_image);
         image.setImageDrawable(getDrawable(nodeInfo));
         image.setBackgroundDrawable(getDrawableOrDefaultBackground(indicatorBackgroundDrawable));
         image.setScaleType(ScaleType.CENTER);
@@ -221,9 +239,10 @@ public abstract class TreeViewAdapter<T> implements ListAdapter {
             image.setOnClickListener(null);
         }
         layout.setTag(nodeInfo.getId());
-        final FrameLayout frameLayout = (FrameLayout) layout.findViewById(R.id.treeview_list_item_frame);
-        final FrameLayout.LayoutParams childParams = new FrameLayout.LayoutParams(LayoutParams.FILL_PARENT,
-                LayoutParams.FILL_PARENT);
+        final FrameLayout frameLayout = (FrameLayout) layout
+                .findViewById(R.id.treeview_list_item_frame);
+        final FrameLayout.LayoutParams childParams = new FrameLayout.LayoutParams(
+                LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
         if (newChildView) {
             frameLayout.addView(childView, childParams);
         }
@@ -237,7 +256,7 @@ public abstract class TreeViewAdapter<T> implements ListAdapter {
     }
 
     protected int calculateIndentation(final TreeNodeInfo<T> nodeInfo) {
-        return indentWidth * (nodeInfo.getLevel() + (collapsible ? 1 : 0));
+        return getIndentWidth() * (nodeInfo.getLevel() + (collapsible ? 1 : 0));
     }
 
     private Drawable getDrawable(final TreeNodeInfo<T> nodeInfo) {
@@ -274,7 +293,8 @@ public abstract class TreeViewAdapter<T> implements ListAdapter {
         this.rowBackgroundDrawable = rowBackgroundDrawable;
     }
 
-    public void setIndicatorBackgroundDrawable(final Drawable indicatorBackgroundDrawable) {
+    public void setIndicatorBackgroundDrawable(
+            final Drawable indicatorBackgroundDrawable) {
         this.indicatorBackgroundDrawable = indicatorBackgroundDrawable;
     }
 
@@ -288,6 +308,10 @@ public abstract class TreeViewAdapter<T> implements ListAdapter {
 
     public void setHandleTrackballPress(final boolean handleTrackballPress) {
         this.handleTrackballPress = handleTrackballPress;
+    }
+
+    private int getIndentWidth() {
+        return indentWidth;
     }
 
 }

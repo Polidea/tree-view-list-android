@@ -20,12 +20,13 @@ public interface TreeStateManager<T> {
      * subnode of the first node).
      * 
      * @param id
-     * @return
+     *            id of the node
+     * @return textual description of the hierarchy in tree for the node.
      */
     Integer[] getHierarchyDescription(T id);
 
     /**
-     * Returns level of the node
+     * Returns level of the node.
      * 
      * @param id
      *            id of the node
@@ -34,7 +35,7 @@ public interface TreeStateManager<T> {
     int getLevel(T id);
 
     /**
-     * Returns information about the node
+     * Returns information about the node.
      * 
      * @param id
      *            node id

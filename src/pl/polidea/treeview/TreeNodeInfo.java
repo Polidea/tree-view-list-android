@@ -3,6 +3,8 @@ package pl.polidea.treeview;
 /**
  * Information about the node.
  * 
+ * @param <T>
+ *            type of the id for the tree
  */
 public class TreeNodeInfo<T> {
     private final T id;
@@ -26,7 +28,8 @@ public class TreeNodeInfo<T> {
      *            whether the tree node is expanded
      * 
      */
-    public TreeNodeInfo(final T id, final int level, final boolean withChildren, final boolean visible,
+    public TreeNodeInfo(final T id, final int level,
+            final boolean withChildren, final boolean visible,
             final boolean expanded) {
         super();
         this.id = id;
@@ -58,8 +61,9 @@ public class TreeNodeInfo<T> {
 
     @Override
     public String toString() {
-        return "TreeNodeInfo [id=" + id + ", level=" + level + ", withChildren=" + withChildren + ", visible="
-                + visible + ", expanded=" + expanded + "]";
+        return "TreeNodeInfo [id=" + id + ", level=" + level
+                + ", withChildren=" + withChildren + ", visible=" + visible
+                + ", expanded=" + expanded + "]";
     }
 
 }

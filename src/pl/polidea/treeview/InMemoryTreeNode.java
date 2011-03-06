@@ -7,16 +7,18 @@ import java.util.List;
  * Node. It is package protected so that it cannot be used outside.
  * 
  * @param <T>
+ *            type of the identifier used by the tree
  */
 class InMemoryTreeNode<T> {
-    final T id;
-    final T parent;
-    final int level;
+    private final T id;
+    private final T parent;
+    private final int level;
     private boolean visible = true;
     private final List<InMemoryTreeNode<T>> children = new LinkedList<InMemoryTreeNode<T>>();
     private List<T> childIdListCache = null;
 
-    public InMemoryTreeNode(final T id, final T parent, final int level, final boolean visible) {
+    public InMemoryTreeNode(final T id, final T parent, final int level,
+            final boolean visible) {
         super();
         this.id = id;
         this.parent = parent;
@@ -38,7 +40,7 @@ class InMemoryTreeNode<T> {
         if (childIdListCache == null) {
             childIdListCache = new LinkedList<T>();
             for (final InMemoryTreeNode<T> n : children) {
-                childIdListCache.add(n.id);
+                childIdListCache.add(n.getId());
             }
         }
         return childIdListCache;
@@ -56,10 +58,12 @@ class InMemoryTreeNode<T> {
         return children.size();
     }
 
-    public InMemoryTreeNode<T> add(final int index, final T child, final boolean visible) {
+    public InMemoryTreeNode<T> add(final int index, final T child,
+            final boolean visible) {
         childIdListCache = null;
         // Note! top levell children are always visible (!)
-        final InMemoryTreeNode<T> newNode = new InMemoryTreeNode<T>(child, id, level + 1, id == null ? true : visible);
+        final InMemoryTreeNode<T> newNode = new InMemoryTreeNode<T>(child,
+                getId(), getLevel() + 1, getId() == null ? true : visible);
         children.add(index, newNode);
         return newNode;
     }
@@ -80,8 +84,22 @@ class InMemoryTreeNode<T> {
 
     @Override
     public String toString() {
-        return "InMemoryTreeNode [id=" + id + ", parent=" + parent + ", level=" + level + ", visible=" + visible
-                + ", children=" + children + ", childIdListCache=" + childIdListCache + "]";
+        return "InMemoryTreeNode [id=" + getId() + ", parent=" + getParent()
+                + ", level=" + getLevel() + ", visible=" + visible
+                + ", children=" + children + ", childIdListCache="
+                + childIdListCache + "]";
+    }
+
+    T getId() {
+        return id;
+    }
+
+    T getParent() {
+        return parent;
+    }
+
+    int getLevel() {
+        return level;
     }
 
 }
