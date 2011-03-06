@@ -16,8 +16,8 @@ public interface TreeStateManager<T> {
     /**
      * Returns array of integers showing the location of the node in hierarchy.
      * It corresponds to heading numbering. {0,0,0} in 3 level node is the first
-     * node {0.0.1} is second leaf (assuming that there are two leaves in firs
-     * subnode of the first node.
+     * node {0,0,1} is second leaf (assuming that there are two leaves in first
+     * subnode of the first node).
      * 
      * @param id
      * @return
@@ -177,5 +177,11 @@ public interface TreeStateManager<T> {
      *            observer
      */
     void unregisterDataSetObserver(final DataSetObserver observer);
+
+    /**
+     * Cleans tree stored in manager. After this operation the tree is empty.
+     * 
+     */
+    void clear();
 
 }

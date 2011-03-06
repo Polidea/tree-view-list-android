@@ -1,10 +1,10 @@
 package pl.polidea.treeview;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -20,12 +20,13 @@ public class InMemoryTreeStateManager<T extends Object> implements TreeStateMana
     private final Map<T, InMemoryTreeNode<T>> allNodes = new HashMap<T, InMemoryTreeNode<T>>();
     private final InMemoryTreeNode<T> topSentinel = new InMemoryTreeNode<T>(null, null, -1, true);
     private List<T> visibleListCache = null; // lasy initialised
-    private List<T> unmodifiableVisibleList;
+    private List<T> unmodifiableVisibleList = null;
     private boolean visibleByDefault = true;
     private final Set<DataSetObserver> observers = new HashSet<DataSetObserver>();
 
-    private void notifyObserversDataSetChanged() {
+    private void internalDataSetChanged() {
         visibleListCache = null;
+        unmodifiableVisibleList = null;
         for (final DataSetObserver observer : observers) {
             observer.onChanged();
         }
@@ -110,7 +111,7 @@ public class InMemoryTreeStateManager<T extends Object> implements TreeStateMana
             allNodes.put(newChild, added);
         }
         if (visibility) {
-            notifyObserversDataSetChanged();
+            internalDataSetChanged();
         }
     }
 
@@ -129,7 +130,7 @@ public class InMemoryTreeStateManager<T extends Object> implements TreeStateMana
             allNodes.put(newChild, added);
         }
         if (visibility) {
-            notifyObserversDataSetChanged();
+            internalDataSetChanged();
         }
     }
 
@@ -147,7 +148,7 @@ public class InMemoryTreeStateManager<T extends Object> implements TreeStateMana
         if (node.id != null) {
             allNodes.remove(node.id);
             if (node.isVisible()) {
-                notifyObserversDataSetChanged();
+                internalDataSetChanged();
             }
         }
     }
@@ -165,21 +166,21 @@ public class InMemoryTreeStateManager<T extends Object> implements TreeStateMana
     public synchronized void expandDirectChildren(final T id) {
         final InMemoryTreeNode<T> node = getNodeFromTreeOrThrowAllowRoot(id);
         setChildrenVisibility(node, true, false);
-        notifyObserversDataSetChanged();
+        internalDataSetChanged();
     }
 
     @Override
     public synchronized void expandEverythingBelow(final T id) {
         final InMemoryTreeNode<T> node = getNodeFromTreeOrThrowAllowRoot(id);
         setChildrenVisibility(node, true, true);
-        notifyObserversDataSetChanged();
+        internalDataSetChanged();
     }
 
     @Override
     public synchronized void collapseChildren(final T id) {
         final InMemoryTreeNode<T> node = getNodeFromTreeOrThrowAllowRoot(id);
         setChildrenVisibility(node, false, true);
-        notifyObserversDataSetChanged();
+        internalDataSetChanged();
     }
 
     @Override
@@ -225,8 +226,7 @@ public class InMemoryTreeStateManager<T extends Object> implements TreeStateMana
     public synchronized List<T> getVisibleList() {
         T currentId = null;
         if (visibleListCache == null) {
-            unmodifiableVisibleList = null;
-            visibleListCache = new LinkedList<T>();
+            visibleListCache = new ArrayList<T>(allNodes.size());
             do {
                 currentId = getNextVisible(currentId);
                 if (currentId == null) {
@@ -320,10 +320,17 @@ public class InMemoryTreeStateManager<T extends Object> implements TreeStateMana
     }
 
     @Override
-    public String toString() {
+    public synchronized String toString() {
         final StringBuilder sb = new StringBuilder();
         appendToSb(sb, null);
         return sb.toString();
+    }
+
+    @Override
+    public synchronized void clear() {
+        allNodes.clear();
+        topSentinel.clearChildren();
+        internalDataSetChanged();
     }
 
 }
