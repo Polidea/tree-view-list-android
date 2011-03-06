@@ -7,7 +7,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.Gravity;
-import android.widget.ImageView.ScaleType;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
@@ -26,13 +25,17 @@ import android.widget.ListView;
  */
 public class TreeViewList<T> extends ListView {
 
+    private static final ColorDrawable DEFAULT_COLOR_DRAWABLE = new ColorDrawable(Color.TRANSPARENT);
+    private static final int DEFAULT_COLLAPSED_RESOURCE = R.drawable.collapsed;
+    private static final int DEFAULT_EXPANDED_RESOURCE = R.drawable.expanded;
+    private static final int DEFAULT_INDENT = 0;
+    private static final int DEFAULT_GRAVITY = Gravity.LEFT | Gravity.CENTER_VERTICAL;
     private Drawable expandedDrawable;
     private Drawable collapsedDrawable;
     private Drawable rowBackgroundDrawable;
     private Drawable indicatorBackgroundDrawable;
-    private ScaleType indicatorScaleType = ScaleType.CENTER;
     private int indentWidth = 0;
-    private int indicatorGravity = Gravity.RIGHT;
+    private int indicatorGravity = 0;
 
     public TreeViewList(final Context context, final AttributeSet attrs) {
         this(context, attrs, R.style.treeViewListStyle);
@@ -51,25 +54,21 @@ public class TreeViewList<T> extends ListView {
         final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.TreeViewList);
         expandedDrawable = a.getDrawable(R.styleable.TreeViewList_src_expanded);
         if (expandedDrawable == null) {
-            expandedDrawable = context.getResources().getDrawable(R.drawable.expanded);
+            expandedDrawable = context.getResources().getDrawable(DEFAULT_EXPANDED_RESOURCE);
         }
         collapsedDrawable = a.getDrawable(R.styleable.TreeViewList_src_collapsed);
         if (collapsedDrawable == null) {
-            collapsedDrawable = context.getResources().getDrawable(R.drawable.collapsed);
+            collapsedDrawable = context.getResources().getDrawable(DEFAULT_COLLAPSED_RESOURCE);
         }
-        indentWidth = a.getDimensionPixelSize(R.styleable.TreeViewList_indent_width, 20);
-        indicatorGravity = a.getInteger(R.styleable.TreeViewList_indicator_gravity, Gravity.RIGHT);
-        final int index = a.getInt(R.styleable.TreeViewList_indicator_scaleType, -1);
-        if (index >= 0) {
-            indicatorScaleType = ScaleType.values()[index];
-        }
+        indentWidth = a.getDimensionPixelSize(R.styleable.TreeViewList_indent_width, DEFAULT_INDENT);
+        indicatorGravity = a.getInteger(R.styleable.TreeViewList_indicator_gravity, DEFAULT_GRAVITY);
         indicatorBackgroundDrawable = a.getDrawable(R.styleable.TreeViewList_indicator_background);
         if (indicatorBackgroundDrawable == null) {
-            indicatorBackgroundDrawable = new ColorDrawable(Color.TRANSPARENT);
+            indicatorBackgroundDrawable = DEFAULT_COLOR_DRAWABLE;
         }
         rowBackgroundDrawable = a.getDrawable(R.styleable.TreeViewList_row_background);
         if (rowBackgroundDrawable == null) {
-            rowBackgroundDrawable = new ColorDrawable(Color.TRANSPARENT);
+            rowBackgroundDrawable = DEFAULT_COLOR_DRAWABLE;
         }
     }
 
@@ -79,7 +78,6 @@ public class TreeViewList<T> extends ListView {
         adapter.setExpandedDrawable(expandedDrawable);
         adapter.setIndicatorGravity(indicatorGravity);
         adapter.setIndentWidth(indentWidth);
-        adapter.setIndicatorScaleType(indicatorScaleType);
         adapter.setIndicatorBackgroundDrawable(indicatorBackgroundDrawable);
         adapter.setRowBackgroundDrawable(rowBackgroundDrawable);
     }

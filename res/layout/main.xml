@@ -2,5 +2,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:treeView="http://schemas.android.com/apk/res/pl.polidea.treeview"
 	android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent">
 	<pl.polidea.treeview.TreeViewList android:id="@+id/mainTreeView" android:layout_width="fill_parent"
-		android:layout_height="fill_parent" treeView:indicator_gravity="right" />
+		android:layout_height="fill_parent" treeView:indicator_gravity="right|center_vertical" />
 </LinearLayout>

@@ -5,7 +5,6 @@ import android.database.DataSetObserver;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,9 +27,8 @@ public abstract class TreeViewAdapter<T> implements ListAdapter {
     private final int numberOfLevels;
     private final LayoutInflater layoutInflater;
 
-    private int indentWidth = 0;
-    private int indicatorGravity = Gravity.RIGHT;
-    private ScaleType indicatorScaleType = ScaleType.CENTER;
+    protected int indentWidth = 0;
+    private int indicatorGravity = 0;
     private Drawable collapsedDrawable;
     private Drawable expandedDrawable;
     private Drawable indicatorBackgroundDrawable;
@@ -166,14 +164,15 @@ public abstract class TreeViewAdapter<T> implements ListAdapter {
             final TreeNodeInfo<T> nodeInfo, final boolean newChildView) {
         final Drawable individualRowDrawable = getBackgroundDrawable(nodeInfo);
         layout.setBackgroundDrawable(individualRowDrawable == null ? rowBackgroundDrawable : individualRowDrawable);
+        final LinearLayout.LayoutParams indicatorLayoutParams = new LinearLayout.LayoutParams(
+                calculateIndentation(nodeInfo), LayoutParams.FILL_PARENT);
+        final LinearLayout indicatorLayout = (LinearLayout) layout.findViewById(R.id.treeview_list_item_image_layout);
+        indicatorLayout.setGravity(indicatorGravity);
+        indicatorLayout.setLayoutParams(indicatorLayoutParams);
         final ImageView image = (ImageView) layout.findViewById(R.id.treeview_list_item_image);
         image.setImageDrawable(getDrawable(nodeInfo));
         image.setBackgroundDrawable(indicatorBackgroundDrawable);
-        image.setScaleType(indicatorScaleType);
-        final LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(indentWidth
-                * (nodeInfo.getLevel() + 1), LayoutParams.FILL_PARENT);
-        layoutParams.gravity = indicatorGravity;
-        image.setLayoutParams(layoutParams);
+        image.setScaleType(ScaleType.CENTER);
         final FrameLayout frameLayout = (FrameLayout) layout.findViewById(R.id.treeview_list_item_frame);
         final FrameLayout.LayoutParams childParams = new FrameLayout.LayoutParams(LayoutParams.FILL_PARENT,
                 LayoutParams.FILL_PARENT);
@@ -181,6 +180,10 @@ public abstract class TreeViewAdapter<T> implements ListAdapter {
             frameLayout.addView(childView, childParams);
         }
         return layout;
+    }
+
+    protected int calculateIndentation(final TreeNodeInfo<T> nodeInfo) {
+        return indentWidth * (nodeInfo.getLevel() + 1);
     }
 
     private Drawable getDrawable(final TreeNodeInfo<T> nodeInfo) {
@@ -211,10 +214,6 @@ public abstract class TreeViewAdapter<T> implements ListAdapter {
     public void setIndentWidth(final int indentWidth) {
         this.indentWidth = indentWidth;
         calculateIndentWidth();
-    }
-
-    public void setIndicatorScaleType(final ScaleType indicatorScaleType) {
-        this.indicatorScaleType = indicatorScaleType;
     }
 
     public void setRowBackgroundDrawable(final Drawable rowBackgroundDrawable) {
