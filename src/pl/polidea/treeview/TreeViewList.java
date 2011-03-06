@@ -23,7 +23,7 @@ import android.widget.ListView;
  * 
  * @param <T>
  */
-public class TreeViewList<T> extends ListView {
+public class TreeViewList extends ListView {
 
     private static final ColorDrawable DEFAULT_COLOR_DRAWABLE = new ColorDrawable(Color.TRANSPARENT);
     private static final int DEFAULT_COLLAPSED_RESOURCE = R.drawable.collapsed;
@@ -36,6 +36,7 @@ public class TreeViewList<T> extends ListView {
     private Drawable indicatorBackgroundDrawable;
     private int indentWidth = 0;
     private int indicatorGravity = 0;
+    private TreeViewAdapter< ? > treeAdapter;
 
     public TreeViewList(final Context context, final AttributeSet attrs) {
         this(context, attrs, R.style.treeViewListStyle);
@@ -72,19 +73,19 @@ public class TreeViewList<T> extends ListView {
         }
     }
 
-    public void setTreeViewAdapter(final TreeViewAdapter<T> adapter) {
-        super.setAdapter(adapter);
-        adapter.setCollapsedDrawable(collapsedDrawable);
-        adapter.setExpandedDrawable(expandedDrawable);
-        adapter.setIndicatorGravity(indicatorGravity);
-        adapter.setIndentWidth(indentWidth);
-        adapter.setIndicatorBackgroundDrawable(indicatorBackgroundDrawable);
-        adapter.setRowBackgroundDrawable(rowBackgroundDrawable);
-    }
-
     @Override
     public void setAdapter(final ListAdapter adapter) {
-        throw new RuntimeException("Do not use setAdapter directly. Use setTreeViewAdapter instead...");
+        if (!(adapter instanceof TreeViewAdapter)) {
+            throw new RuntimeException("The adapter is not of TreeViewAdapter type");
+        }
+        treeAdapter = (TreeViewAdapter< ? >) adapter;
+        treeAdapter.setCollapsedDrawable(collapsedDrawable);
+        treeAdapter.setExpandedDrawable(expandedDrawable);
+        treeAdapter.setIndicatorGravity(indicatorGravity);
+        treeAdapter.setIndentWidth(indentWidth);
+        treeAdapter.setIndicatorBackgroundDrawable(indicatorBackgroundDrawable);
+        treeAdapter.setRowBackgroundDrawable(rowBackgroundDrawable);
+        super.setAdapter(treeAdapter);
     }
 
 }

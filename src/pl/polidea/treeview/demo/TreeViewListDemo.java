@@ -97,7 +97,7 @@ public class TreeViewListDemo extends Activity {
     }
 
     private static final String TAG = TreeViewListDemo.class.getSimpleName();
-    private TreeViewList<Long> treeView;
+    private TreeViewList treeView;
 
     private static final int[] demoNodes = new int[] { 0, 0, 1, 1, 1, 2, 2, 1, 1, 2, 1, 0, 0, 0, 1, 2, 3, 2, 0, 0, 1,
             2, 0, 1, 2, 0, 1 };
@@ -112,8 +112,6 @@ public class TreeViewListDemo extends Activity {
         return "Node " + id + "<" + manager.getLevel(id) + "> : " + Arrays.asList(hierarchy);
     }
 
-    /** Called when the activity is first created. */
-    @SuppressWarnings("unchecked")
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -122,10 +120,10 @@ public class TreeViewListDemo extends Activity {
             treeBuilder.sequentiallyAddNextNode((long) i, demoNodes[i]);
         }
         Log.d(TAG, manager.toString());
-        treeView = (TreeViewList<Long>) findViewById(R.id.mainTreeView);
+        treeView = (TreeViewList) findViewById(R.id.mainTreeView);
         fancyAdapter = new FancyColouredVariousSizesAdapter(this, manager, levelNumber);
         simpleAdapter = new SimpleStandardAdapter(this, manager, levelNumber);
-        treeView.setTreeViewAdapter(simpleAdapter);
+        treeView.setAdapter(simpleAdapter);
     }
 
     @Override
@@ -139,10 +137,10 @@ public class TreeViewListDemo extends Activity {
     public boolean onOptionsItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
         case R.id.simple_menu_item:
-            treeView.setTreeViewAdapter(simpleAdapter);
+            treeView.setAdapter(simpleAdapter);
             break;
         case R.id.fancy_menu_item:
-            treeView.setTreeViewAdapter(fancyAdapter);
+            treeView.setAdapter(fancyAdapter);
             break;
         default:
             return false;
