@@ -6,6 +6,6 @@
 	</ListView>
 	<pl.polidea.treeview.TreeViewList android:id="@+id/mainTreeView" android:layout_width="fill_parent"
 		android:layout_height="fill_parent" treeView:indicator_gravity="right|center_vertical"
-		treeView:collapsable="true"
+		treeView:collapsible="true"
 		android:scrollbars="vertical" />
 </LinearLayout>

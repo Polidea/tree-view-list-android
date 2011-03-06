@@ -5,4 +5,8 @@
     <string name="simple_menu_condensed">Simple</string>
     <string name="fancy_menu_name">Fancy Menu</string>
     <string name="fancy_menu_condensed">Fancy</string>
+    <string name="expand_all_menu">Expand all</string>
+    <string name="expand_all_condensed">Expand All</string>
+    <string name="collapsible_menu">Collapsible</string>
+    <string name="collapsible_condensed">Collapsible</string>
 </resources>

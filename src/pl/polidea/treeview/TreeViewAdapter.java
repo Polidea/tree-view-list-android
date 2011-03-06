@@ -45,7 +45,7 @@ public abstract class TreeViewAdapter<T> implements ListAdapter {
             expandCollapse(id);
         }
     };
-    private boolean collapsable;
+    private boolean collapsible;
 
     protected TreeStateManager<T> getManager() {
         return treeStateManager;
@@ -213,11 +213,11 @@ public abstract class TreeViewAdapter<T> implements ListAdapter {
     }
 
     protected int calculateIndentation(final TreeNodeInfo<T> nodeInfo) {
-        return indentWidth * (nodeInfo.getLevel() + (collapsable ? 1 : 0));
+        return indentWidth * (nodeInfo.getLevel() + (collapsible ? 1 : 0));
     }
 
     private Drawable getDrawable(final TreeNodeInfo<T> nodeInfo) {
-        if (!nodeInfo.isWithChildren() || !collapsable) {
+        if (!nodeInfo.isWithChildren() || !collapsible) {
             return new ColorDrawable(Color.TRANSPARENT);
         }
         if (nodeInfo.isExpanded()) {
@@ -254,8 +254,11 @@ public abstract class TreeViewAdapter<T> implements ListAdapter {
         this.indicatorBackgroundDrawable = indicatorBackgroundDrawable;
     }
 
-    public void setCollapsable(final boolean collapsable) {
-        this.collapsable = collapsable;
+    public void setCollapsible(final boolean collapsible) {
+        this.collapsible = collapsible;
     }
 
+    public void refresh() {
+        treeStateManager.refresh();
+    }
 }

@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu
-  xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:enabled="true" android:id="@+id/simple_menu_item" android:numericShortcut="1" android:titleCondensed="@string/simple_menu_condensed" android:visible="true" android:alphabeticShortcut="s" android:title="@string/simple_menu_name"></item>
-    <item android:id="@+id/fancy_menu_item" android:titleCondensed="@string/fancy_menu_condensed" android:alphabeticShortcut="f" android:title="@string/fancy_menu_name" android:enabled="true" android:visible="true"></item>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+	<item android:enabled="true" android:id="@+id/simple_menu_item" android:numericShortcut="1"
+		android:titleCondensed="@string/simple_menu_condensed" android:visible="true" android:alphabeticShortcut="s"
+		android:title="@string/simple_menu_name"></item>
+	<item android:id="@+id/fancy_menu_item" android:titleCondensed="@string/fancy_menu_condensed"
+		android:alphabeticShortcut="f" android:title="@string/fancy_menu_name" android:enabled="true" android:visible="true"
+		android:numericShortcut="2"></item>
+	<item android:enabled="true" android:titleCondensed="@string/expand_all_condensed" android:visible="true"
+		android:title="@string/expand_all_menu" android:id="@+id/expand_all_menu_item" android:numericShortcut="3"
+		android:alphabeticShortcut="e"></item>
+	<item android:enabled="true" android:checkable="true" android:numericShortcut="4" android:titleCondensed="@string/collapsible_condensed"
+		android:visible="true" android:alphabeticShortcut="c" android:checked="true" android:title="@string/collapsible_menu"
+		android:id="@+id/collapsible_menu_item"></item>
 </menu>

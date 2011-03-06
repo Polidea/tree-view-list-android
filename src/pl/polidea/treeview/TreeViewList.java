@@ -37,7 +37,7 @@ public class TreeViewList extends ListView {
     private int indentWidth = 0;
     private int indicatorGravity = 0;
     private TreeViewAdapter< ? > treeAdapter;
-    private boolean collapsable;
+    private boolean collapsible;
 
     public TreeViewList(final Context context, final AttributeSet attrs) {
         this(context, attrs, R.style.treeViewListStyle);
@@ -72,7 +72,7 @@ public class TreeViewList extends ListView {
         if (rowBackgroundDrawable == null) {
             rowBackgroundDrawable = DEFAULT_COLOR_DRAWABLE;
         }
-        collapsable = a.getBoolean(R.styleable.TreeViewList_collapsable, true);
+        collapsible = a.getBoolean(R.styleable.TreeViewList_collapsible, true);
     }
 
     @Override
@@ -87,8 +87,43 @@ public class TreeViewList extends ListView {
         treeAdapter.setIndentWidth(indentWidth);
         treeAdapter.setIndicatorBackgroundDrawable(indicatorBackgroundDrawable);
         treeAdapter.setRowBackgroundDrawable(rowBackgroundDrawable);
-        treeAdapter.setCollapsable(collapsable);
+        treeAdapter.setCollapsible(collapsible);
         super.setAdapter(treeAdapter);
+    }
+
+    public void setExpandedDrawable(final Drawable expandedDrawable) {
+        this.expandedDrawable = expandedDrawable;
+        treeAdapter.refresh();
+    }
+
+    public void setCollapsedDrawable(final Drawable collapsedDrawable) {
+        this.collapsedDrawable = collapsedDrawable;
+        treeAdapter.refresh();
+    }
+
+    public void setRowBackgroundDrawable(final Drawable rowBackgroundDrawable) {
+        this.rowBackgroundDrawable = rowBackgroundDrawable;
+        treeAdapter.refresh();
+    }
+
+    public void setIndicatorBackgroundDrawable(final Drawable indicatorBackgroundDrawable) {
+        this.indicatorBackgroundDrawable = indicatorBackgroundDrawable;
+        treeAdapter.refresh();
+    }
+
+    public void setIndentWidth(final int indentWidth) {
+        this.indentWidth = indentWidth;
+        treeAdapter.refresh();
+    }
+
+    public void setIndicatorGravity(final int indicatorGravity) {
+        this.indicatorGravity = indicatorGravity;
+        treeAdapter.refresh();
+    }
+
+    public void setCollapsible(final boolean collapsible) {
+        this.collapsible = collapsible;
+        treeAdapter.refresh();
     }
 
 }

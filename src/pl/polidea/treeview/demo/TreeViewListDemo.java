@@ -142,6 +142,12 @@ public class TreeViewListDemo extends Activity {
         case R.id.fancy_menu_item:
             treeView.setAdapter(fancyAdapter);
             break;
+        case R.id.collapsible_menu_item:
+            treeView.setCollapsible(item.isChecked());
+            break;
+        case R.id.expand_all_menu_item:
+            manager.expandEverythingBelow(null);
+            break;
         default:
             return false;
         }

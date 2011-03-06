@@ -338,4 +338,9 @@ public class InMemoryTreeStateManager<T extends Object> implements TreeStateMana
         internalDataSetChanged();
     }
 
+    @Override
+    public void refresh() {
+        internalDataSetChanged();
+    }
+
 }

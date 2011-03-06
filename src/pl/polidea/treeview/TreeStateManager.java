@@ -184,4 +184,8 @@ public interface TreeStateManager<T> {
      */
     void clear();
 
+    /**
+     * Refreshes views connected to the manager.
+     */
+    void refresh();
 }
