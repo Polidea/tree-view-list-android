@@ -26,7 +26,7 @@ public class InMemoryTreeStateManager<T> implements TreeStateManager<T> {
     private boolean visibleByDefault = true;
     private final Set<DataSetObserver> observers = new HashSet<DataSetObserver>();
 
-    private void internalDataSetChanged() {
+    private synchronized void internalDataSetChanged() {
         visibleListCache = null;
         unmodifiableVisibleList = null;
         for (final DataSetObserver observer : observers) {

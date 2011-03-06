@@ -58,7 +58,7 @@ class InMemoryTreeNode<T> {
         return children.size();
     }
 
-    public InMemoryTreeNode<T> add(final int index, final T child,
+    public synchronized InMemoryTreeNode<T> add(final int index, final T child,
             final boolean visible) {
         childIdListCache = null;
         // Note! top levell children are always visible (!)

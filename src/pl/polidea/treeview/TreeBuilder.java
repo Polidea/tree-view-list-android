@@ -37,7 +37,7 @@ public class TreeBuilder<T> {
      * @param child
      *            child id
      */
-    public void addRelation(final T parent, final T child) {
+    public synchronized void addRelation(final T parent, final T child) {
         Log.d(TAG, "Adding relation parent:" + parent + " -> child: " + child);
         manager.addAfterChild(parent, child, null);
         lastAddedId = child;
