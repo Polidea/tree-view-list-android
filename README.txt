@@ -1,12 +1,3 @@
-This project requires the following libraries to be present in the same
-directory as the main project:
-
-* .... Add shared libraries here
-
-Make sure the projects are checked out in the same workspace in eclipse and
-have the right name.
-
-
 ----------------------------------------------------------------------------
 Requirements :
 	- Android SDK - https://dl-ssl.google.com/android/eclipse/
