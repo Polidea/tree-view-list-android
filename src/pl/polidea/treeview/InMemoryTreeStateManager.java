@@ -70,7 +70,12 @@ public class InMemoryTreeStateManager<T extends Object> implements TreeStateMana
     @Override
     public synchronized TreeNodeInfo<T> getNodeInfo(final T id) {
         final InMemoryTreeNode<T> node = getNodeFromTreeOrThrow(id);
-        return new TreeNodeInfo<T>(id, node.level, node.getChildrenListSize() > 0, node.isVisible());
+        final List<InMemoryTreeNode<T>> children = node.getChildren();
+        boolean expanded = false;
+        if (children.size() > 0 && children.get(0).isVisible()) {
+            expanded = true;
+        }
+        return new TreeNodeInfo<T>(id, node.level, children.size() > 0, node.isVisible(), expanded);
     }
 
     @Override

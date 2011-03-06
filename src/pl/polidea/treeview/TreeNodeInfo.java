@@ -8,7 +8,8 @@ public class TreeNodeInfo<T> {
     private final T id;
     private final int level;
     private final boolean withChildren;
-    private final boolean isVisible;
+    private final boolean visible;
+    private final boolean expanded;
 
     /**
      * Creates the node information.
@@ -19,15 +20,20 @@ public class TreeNodeInfo<T> {
      *            level of the node
      * @param withChildren
      *            whether the node has children.
-     * @param isVisible
+     * @param visible
      *            whether the tree node is visible.
+     * @param expanded
+     *            whether the tree node is expanded
+     * 
      */
-    public TreeNodeInfo(final T id, final int level, final boolean withChildren, final boolean isVisible) {
+    public TreeNodeInfo(final T id, final int level, final boolean withChildren, final boolean visible,
+            final boolean expanded) {
         super();
         this.id = id;
         this.level = level;
         this.withChildren = withChildren;
-        this.isVisible = isVisible;
+        this.visible = visible;
+        this.expanded = expanded;
     }
 
     public T getId() {
@@ -38,8 +44,12 @@ public class TreeNodeInfo<T> {
         return withChildren;
     }
 
+    public boolean isVisible() {
+        return visible;
+    }
+
     public boolean isExpanded() {
-        return isVisible;
+        return expanded;
     }
 
     public int getLevel() {
@@ -48,8 +58,8 @@ public class TreeNodeInfo<T> {
 
     @Override
     public String toString() {
-        return "TreeNodeInfo [id=" + id + ", level=" + level + ", withChildren=" + withChildren + ", isVisible="
-                + isVisible + "]";
+        return "TreeNodeInfo [id=" + id + ", level=" + level + ", withChildren=" + withChildren + ", visible="
+                + visible + ", expanded=" + expanded + "]";
     }
 
 }

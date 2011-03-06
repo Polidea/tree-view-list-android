@@ -59,6 +59,8 @@ public abstract class TreeViewAdapter<T> implements ListAdapter {
         }
         if (info.isExpanded()) {
             treeStateManager.collapseChildren(id);
+        } else {
+            treeStateManager.expandDirectChildren(id);
         }
     }
 
