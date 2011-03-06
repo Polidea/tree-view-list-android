@@ -1,6 +1,8 @@
 package pl.polidea.treeview.demo;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import pl.polidea.treeview.InMemoryTreeStateManager;
 import pl.polidea.treeview.R;
@@ -19,30 +21,28 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class TreeViewListDemo extends Activity {
-    private final class FancyColouredVariousSizesAdapter extends TreeViewAdapter<Long> {
+
+    Set<Long> selected = new HashSet<Long>();
+
+    private final class FancyColouredVariousSizesAdapter extends SimpleStandardAdapter {
         private FancyColouredVariousSizesAdapter(final Activity activity,
                 final TreeStateManager<Long> treeStateManager, final int numberOfLevels) {
             super(activity, treeStateManager, numberOfLevels);
         }
 
         @Override
-        public View getNewChildView(final TreeNodeInfo<Long> treeNodeInfo) {
-            final LinearLayout viewLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.demo_list_item, null);
-            return updateView(viewLayout, treeNodeInfo);
-        }
-
-        @Override
-        public View updateView(final View view, final TreeNodeInfo<Long> treeNodeInfo) {
-            final LinearLayout viewLayout = (LinearLayout) view;
+        public LinearLayout updateView(final View view, final TreeNodeInfo<Long> treeNodeInfo) {
+            final LinearLayout viewLayout = super.updateView(view, treeNodeInfo);
             final TextView descriptionView = (TextView) viewLayout.findViewById(R.id.demo_list_item_description);
             final TextView levelView = (TextView) viewLayout.findViewById(R.id.demo_list_item_level);
-            descriptionView.setText(getDescription(treeNodeInfo.getId()));
             descriptionView.setTextSize(20 - 2 * treeNodeInfo.getLevel());
-            levelView.setText("" + treeNodeInfo.getLevel());
             levelView.setTextSize(20 - 2 * treeNodeInfo.getLevel());
             return viewLayout;
         }
@@ -60,14 +60,10 @@ public class TreeViewListDemo extends Activity {
                 return null;
             }
         }
-
-        @Override
-        public long getItemId(final int position) {
-            return getTreeId(position);
-        }
     }
 
-    private final class SimpleStandardAdapter extends TreeViewAdapter<Long> {
+    private class SimpleStandardAdapter extends TreeViewAdapter<Long> {
+
         private SimpleStandardAdapter(final Activity activity, final TreeStateManager<Long> treeStateManager,
                 final int numberOfLevels) {
             super(activity, treeStateManager, numberOfLevels);
@@ -80,12 +76,21 @@ public class TreeViewListDemo extends Activity {
         }
 
         @Override
-        public View updateView(final View view, final TreeNodeInfo<Long> treeNodeInfo) {
+        public LinearLayout updateView(final View view, final TreeNodeInfo<Long> treeNodeInfo) {
             final LinearLayout viewLayout = (LinearLayout) view;
             final TextView descriptionView = (TextView) viewLayout.findViewById(R.id.demo_list_item_description);
             final TextView levelView = (TextView) viewLayout.findViewById(R.id.demo_list_item_level);
             descriptionView.setText(getDescription(treeNodeInfo.getId()));
             levelView.setText("" + treeNodeInfo.getLevel());
+            final CheckBox box = (CheckBox) viewLayout.findViewById(R.id.demo_list_checkbox);
+            box.setTag(treeNodeInfo.getId());
+            if (treeNodeInfo.isWithChildren()) {
+                box.setVisibility(View.GONE);
+            } else {
+                box.setVisibility(View.VISIBLE);
+                box.setChecked(selected.contains(treeNodeInfo.getId()));
+            }
+            box.setOnCheckedChangeListener(onCheckedChange);
             return viewLayout;
         }
 
@@ -94,6 +99,18 @@ public class TreeViewListDemo extends Activity {
             return getTreeId(position);
         }
     }
+
+    private final OnCheckedChangeListener onCheckedChange = new OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
+            final Long id = (Long) buttonView.getTag();
+            if (isChecked) {
+                selected.add(id);
+            } else {
+                selected.remove(id);
+            }
+        }
+    };
 
     private static final String TAG = TreeViewListDemo.class.getSimpleName();
     private TreeViewList treeView;
@@ -108,7 +125,7 @@ public class TreeViewListDemo extends Activity {
 
     private String getDescription(final long id) {
         final Integer[] hierarchy = manager.getHierarchyDescription(id);
-        return "Node " + id + "<" + manager.getLevel(id) + "> : " + Arrays.asList(hierarchy);
+        return "Node " + id + Arrays.asList(hierarchy);
     }
 
     @Override
@@ -159,6 +176,9 @@ public class TreeViewListDemo extends Activity {
             break;
         case R.id.expand_all_menu_item:
             manager.expandEverythingBelow(null);
+            break;
+        case R.id.collapse_all_menu_item:
+            manager.collapseChildren(null);
             break;
         default:
             return false;

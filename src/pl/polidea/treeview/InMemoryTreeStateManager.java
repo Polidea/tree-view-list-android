@@ -184,7 +184,13 @@ public class InMemoryTreeStateManager<T extends Object> implements TreeStateMana
     @Override
     public synchronized void collapseChildren(final T id) {
         final InMemoryTreeNode<T> node = getNodeFromTreeOrThrowAllowRoot(id);
-        setChildrenVisibility(node, false, true);
+        if (node == topSentinel) {
+            for (final InMemoryTreeNode<T> n : topSentinel.getChildren()) {
+                setChildrenVisibility(n, false, true);
+            }
+        } else {
+            setChildrenVisibility(node, false, true);
+        }
         internalDataSetChanged();
     }
 

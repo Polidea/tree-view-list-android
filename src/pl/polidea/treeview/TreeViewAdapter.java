@@ -101,8 +101,9 @@ public abstract class TreeViewAdapter<T> implements ListAdapter {
         this.numberOfLevels = numberOfLevels;
         this.collapsedDrawable = activity.getResources().getDrawable(R.drawable.collapsed);
         this.expandedDrawable = activity.getResources().getDrawable(R.drawable.expanded);
-        this.rowBackgroundDrawable = new ColorDrawable(Color.TRANSPARENT);
-        this.indicatorBackgroundDrawable = new ColorDrawable(Color.TRANSPARENT);
+        this.rowBackgroundDrawable = activity.getResources().getDrawable(android.R.drawable.list_selector_background);
+        this.indicatorBackgroundDrawable = activity.getResources().getDrawable(
+                android.R.drawable.list_selector_background);
         calculateIndentWidth();
     }
 
@@ -233,11 +234,11 @@ public abstract class TreeViewAdapter<T> implements ListAdapter {
         }
         layout.setTag(nodeInfo.getId());
         if (nodeInfo.isWithChildren() && collapsible && handleLongPress) {
-            layout.setOnCreateContextMenuListener(onCreateContextMenuListener);
             activity.registerForContextMenu(layout);
+            layout.setOnCreateContextMenuListener(onCreateContextMenuListener);
         } else {
-            image.setOnCreateContextMenuListener(null);
             activity.unregisterForContextMenu(layout);
+            image.setOnCreateContextMenuListener(null);
         }
         final FrameLayout frameLayout = (FrameLayout) layout.findViewById(R.id.treeview_list_item_frame);
         final FrameLayout.LayoutParams childParams = new FrameLayout.LayoutParams(LayoutParams.FILL_PARENT,

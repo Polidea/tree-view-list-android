@@ -54,6 +54,7 @@ public class TreeViewList extends ListView {
     public TreeViewList(final Context context, final AttributeSet attrs, final int defStyle) {
         super(context, attrs, defStyle);
         parseAttributes(context, attrs, defStyle);
+        setClickable(true);
     }
 
     private void parseAttributes(final Context context, final AttributeSet attrs, final int defStyle) {
@@ -77,6 +78,8 @@ public class TreeViewList extends ListView {
             rowBackgroundDrawable = DEFAULT_COLOR_DRAWABLE;
         }
         collapsible = a.getBoolean(R.styleable.TreeViewList_collapsible, true);
+        handleLongPress = a.getBoolean(R.styleable.TreeViewList_handle_long_press, true);
+        handleTrackballPress = a.getBoolean(R.styleable.TreeViewList_handle_trackball_press, true);
     }
 
     @Override
