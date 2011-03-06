@@ -56,11 +56,12 @@ class InMemoryTreeNode<T> {
         return children.size();
     }
 
-    public void add(final int index, final T child, final boolean visible) {
+    public InMemoryTreeNode<T> add(final int index, final T child, final boolean visible) {
         childIdListCache = null;
         // Note! top levell children are always visible (!)
         final InMemoryTreeNode<T> newNode = new InMemoryTreeNode<T>(child, id, level + 1, id == null ? true : visible);
         children.add(index, newNode);
+        return newNode;
     }
 
     /**

@@ -1,8 +1,15 @@
 package pl.polidea.treeview;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import android.database.DataSetObserver;
 
 /**
  * In-memory manager of tree state.
@@ -12,8 +19,17 @@ import java.util.Map;
 public class InMemoryTreeStateManager<T extends Object> implements TreeStateManager<T> {
     private final Map<T, InMemoryTreeNode<T>> allNodes = new HashMap<T, InMemoryTreeNode<T>>();
     private final InMemoryTreeNode<T> topSentinel = new InMemoryTreeNode<T>(null, null, -1, true);
-
+    private List<T> visibleListCache = null; // lasy initialised
+    private List<T> unmodifiableVisibleList;
     private boolean visibleByDefault = true;
+    private final Set<DataSetObserver> observers = new HashSet<DataSetObserver>();
+
+    private void notifyObserversDataSetChanged() {
+        visibleListCache = null;
+        for (final DataSetObserver observer : observers) {
+            observer.onChanged();
+        }
+    }
 
     /**
      * If true new nodes are visible by default.
@@ -51,7 +67,7 @@ public class InMemoryTreeStateManager<T extends Object> implements TreeStateMana
     }
 
     @Override
-    public synchronized TreeStateManager.TreeNodeInfo<T> getNodeInfo(final T id) {
+    public synchronized TreeNodeInfo<T> getNodeInfo(final T id) {
         final InMemoryTreeNode<T> node = getNodeFromTreeOrThrow(id);
         return new TreeNodeInfo<T>(id, node.level, node.getChildrenListSize() > 0, node.isVisible());
     }
@@ -64,32 +80,56 @@ public class InMemoryTreeStateManager<T extends Object> implements TreeStateMana
 
     @Override
     public synchronized T getParent(final T id) {
-        final InMemoryTreeNode<T> node = getNodeFromTreeOrThrow(id);
+        final InMemoryTreeNode<T> node = getNodeFromTreeOrThrowAllowRoot(id);
         return node.parent;
     }
 
+    private boolean getChildrenVisibility(final InMemoryTreeNode<T> node) {
+        boolean visibility;
+        final List<InMemoryTreeNode<T>> children = node.getChildren();
+        if (children.size() > 0) {
+            visibility = children.get(0).isVisible();
+        } else {
+            visibility = visibleByDefault;
+        }
+        return visibility;
+    }
+
     @Override
-    public synchronized void addBeforeChild(final T id, final T newChild, final T beforeChild) {
+    public synchronized void addBeforeChild(final T parent, final T newChild, final T beforeChild) {
         expectNodeNotInTreeYet(newChild);
-        final InMemoryTreeNode<T> node = getNodeFromTreeOrThrowAllowRoot(id);
+        final InMemoryTreeNode<T> node = getNodeFromTreeOrThrowAllowRoot(parent);
+        final boolean visibility = getChildrenVisibility(node);
         // top nodes are always expanded.
         if (beforeChild == null) {
-            node.add(0, newChild, visibleByDefault);
+            final InMemoryTreeNode<T> added = node.add(0, newChild, visibility);
+            allNodes.put(newChild, added);
         } else {
             final int index = node.indexOf(beforeChild);
-            node.add(index == -1 ? 0 : index, newChild, visibleByDefault);
+            final InMemoryTreeNode<T> added = node.add(index == -1 ? 0 : index, newChild, visibility);
+            allNodes.put(newChild, added);
+        }
+        if (visibility) {
+            notifyObserversDataSetChanged();
         }
     }
 
     @Override
-    public synchronized void addAfterChild(final T id, final T newChild, final T afterChild) {
+    public synchronized void addAfterChild(final T parent, final T newChild, final T afterChild) {
         expectNodeNotInTreeYet(newChild);
-        final InMemoryTreeNode<T> node = getNodeFromTreeOrThrowAllowRoot(id);
+        final InMemoryTreeNode<T> node = getNodeFromTreeOrThrowAllowRoot(parent);
+        final boolean visibility = getChildrenVisibility(node);
         if (afterChild == null) {
-            node.add(node.getChildrenListSize(), newChild, visibleByDefault);
+            final InMemoryTreeNode<T> added = node.add(node.getChildrenListSize(), newChild, visibility);
+            allNodes.put(newChild, added);
         } else {
             final int index = node.indexOf(afterChild);
-            node.add(index == -1 ? node.getChildrenListSize() : index, newChild, visibleByDefault);
+            final InMemoryTreeNode<T> added = node.add(index == -1 ? node.getChildrenListSize() : index, newChild,
+                    visibility);
+            allNodes.put(newChild, added);
+        }
+        if (visibility) {
+            notifyObserversDataSetChanged();
         }
     }
 
@@ -106,6 +146,9 @@ public class InMemoryTreeStateManager<T extends Object> implements TreeStateMana
         node.clearChildren();
         if (node.id != null) {
             allNodes.remove(node.id);
+            if (node.isVisible()) {
+                notifyObserversDataSetChanged();
+            }
         }
     }
 
@@ -122,19 +165,21 @@ public class InMemoryTreeStateManager<T extends Object> implements TreeStateMana
     public synchronized void expandDirectChildren(final T id) {
         final InMemoryTreeNode<T> node = getNodeFromTreeOrThrowAllowRoot(id);
         setChildrenVisibility(node, true, false);
+        notifyObserversDataSetChanged();
     }
 
     @Override
     public synchronized void expandEverythingBelow(final T id) {
         final InMemoryTreeNode<T> node = getNodeFromTreeOrThrowAllowRoot(id);
         setChildrenVisibility(node, true, true);
-
+        notifyObserversDataSetChanged();
     }
 
     @Override
     public synchronized void collapseChildren(final T id) {
         final InMemoryTreeNode<T> node = getNodeFromTreeOrThrowAllowRoot(id);
         setChildrenVisibility(node, false, true);
+        notifyObserversDataSetChanged();
     }
 
     @Override
@@ -169,6 +214,116 @@ public class InMemoryTreeStateManager<T extends Object> implements TreeStateMana
     @Override
     public synchronized boolean isInTree(final T id) {
         return allNodes.containsKey(id);
+    }
+
+    @Override
+    public synchronized int getVisibleCount() {
+        return getVisibleList().size();
+    }
+
+    @Override
+    public synchronized List<T> getVisibleList() {
+        T currentId = null;
+        if (visibleListCache == null) {
+            unmodifiableVisibleList = null;
+            visibleListCache = new LinkedList<T>();
+            do {
+                currentId = getNextVisible(currentId);
+                if (currentId == null) {
+                    break;
+                } else {
+                    visibleListCache.add(currentId);
+                }
+            } while (true);
+        }
+        if (unmodifiableVisibleList == null) {
+            unmodifiableVisibleList = Collections.unmodifiableList(visibleListCache);
+        }
+        return unmodifiableVisibleList;
+    }
+
+    public synchronized T getNextVisible(final T id) {
+        final InMemoryTreeNode<T> node = getNodeFromTreeOrThrowAllowRoot(id);
+        if (!node.isVisible()) {
+            return null;
+        }
+        final List<InMemoryTreeNode<T>> children = node.getChildren();
+        if (children.size() > 0) {
+            final InMemoryTreeNode<T> firstChild = children.get(0);
+            if (firstChild.isVisible()) {
+                return firstChild.id;
+            }
+        }
+        final T sibl = getNextSibling(id);
+        if (sibl != null) {
+            return sibl;
+        }
+        T parent = node.parent;
+        do {
+            if (parent == null) {
+                return null;
+            }
+            final T parentSibling = getNextSibling(parent);
+            if (parentSibling != null) {
+                return parentSibling;
+            }
+            parent = getNodeFromTreeOrThrow(parent).parent;
+        } while (true);
+    }
+
+    @Override
+    public synchronized void registerDataSetObserver(final DataSetObserver observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public synchronized void unregisterDataSetObserver(final DataSetObserver observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public int getLevel(final T id) {
+        return getNodeFromTreeOrThrow(id).level;
+    }
+
+    @Override
+    public Integer[] getHierarchyDescription(final T id) {
+        final int level = getLevel(id);
+        final Integer[] hierarchy = new Integer[level + 1];
+        int currentLevel = level;
+        T currentId = id;
+        T parent = getParent(currentId);
+        while (currentLevel >= 0) {
+            hierarchy[currentLevel--] = getChildren(parent).indexOf(currentId);
+            currentId = parent;
+            parent = getParent(parent);
+        }
+        ;
+        return hierarchy;
+    }
+
+    private void appendToSb(final StringBuilder sb, final T id) {
+        if (id != null) {
+            final TreeNodeInfo<T> node = getNodeInfo(id);
+            final int indent = node.getLevel() * 4;
+            final char[] indentString = new char[indent];
+            Arrays.fill(indentString, ' ');
+            sb.append(indentString);
+            sb.append(node.toString());
+            sb.append(Arrays.asList(getHierarchyDescription(id)).toString());
+            sb.append("\n");
+        }
+        final List<T> children = getChildren(id);
+        for (final T child : children) {
+            appendToSb(sb, child);
+        }
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        appendToSb(sb, null);
+        return sb.toString();
     }
 
 }

@@ -1,63 +1,66 @@
 package pl.polidea.treeview.demo;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.Arrays;
 
+import pl.polidea.treeview.InMemoryTreeStateManager;
 import pl.polidea.treeview.R;
+import pl.polidea.treeview.TreeNodeInfo;
+import pl.polidea.treeview.TreeSequentialBuilder;
+import pl.polidea.treeview.TreeStateManager;
+import pl.polidea.treeview.TreeViewAdapter;
 import pl.polidea.treeview.TreeViewList;
-import pl.polidea.treeview.TreeViewListAdapter;
 import android.app.Activity;
 import android.os.Bundle;
-import android.widget.SimpleAdapter;
+import android.util.Log;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 public class TreeViewListDemo extends Activity {
+    private static final String TAG = TreeViewListDemo.class.getSimpleName();
     private TreeViewList treeView;
 
-    private final int[] currentNumber = new int[] { -1, -1, -1, -1 };
-    int[] levels = new int[] { 0, 0, 1, 1, 1, 2, 2, 1, 1, 2, 1, 0, 0, 0, 1, 2, 3, 2, 0, 0, 1, 2, 0, 1, 2, 0, 2 };
-    private int maxLevel;
+    private static final int[] demoNodes = new int[] { 0, 0, 1, 1, 1, 2, 2, 1, 1, 2, 1, 0, 0, 0, 1, 2, 3, 2, 0, 0, 1,
+            2, 0, 1, 2, 0, 1 };
+    private static final int levelNumber = 4;
+    private final TreeStateManager<Long> manager = new InMemoryTreeStateManager<Long>();
+    private final TreeSequentialBuilder<Long> treeBuilder = new TreeSequentialBuilder<Long>(manager);
+    private TreeViewAdapter adapter;
 
-    private SimpleAdapter demo;
+    private String getDescription(final long id) {
+        final Integer[] hierarchy = manager.getHierarchyDescription(id);
+        return "Node " + id + "<" + manager.getLevel(id) + "> : " + Arrays.asList(hierarchy);
+    }
 
     /** Called when the activity is first created. */
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        for (int i = 0; i < demoNodes.length; i++) {
+            treeBuilder.sequentiallyAddNextNode((long) i, demoNodes[i]);
+        }
+        Log.d(TAG, manager.toString());
         treeView = (TreeViewList) findViewById(R.id.mainTreeView);
+        adapter = new TreeViewAdapter(this, manager, levelNumber) {
+            @Override
+            public View getNewChildView(final TreeNodeInfo<Long> treeNodeInfo) {
+                final LinearLayout viewLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.demo_list_item,
+                        null);
+                return updateView(viewLayout, treeNodeInfo);
+            }
 
-        maxLevel = currentNumber.length - 1;
-
-        final List<Map<String, ? >> demoList = new ArrayList<Map<String, ? >>();
-        for (int i = 0; i < levels.length; i++) {
-            demoList.add(getMap(i));
-        }
-        demo = new SimpleAdapter(this, demoList, R.layout.demo_list_item, new String[] { "Level", "Description" },
-                new int[] { R.id.demo_list_item_level, R.id.demo_list_item_description });
-        treeView.setAdapter(new TreeViewListAdapter(demo));
+            @Override
+            public View updateView(final View view, final TreeNodeInfo<Long> treeNodeInfo) {
+                final LinearLayout viewLayout = (LinearLayout) view;
+                final TextView descriptionView = (TextView) viewLayout.findViewById(R.id.demo_list_item_description);
+                final TextView levelView = (TextView) viewLayout.findViewById(R.id.demo_list_item_level);
+                descriptionView.setText(getDescription(treeNodeInfo.getId()));
+                levelView.setText("" + treeNodeInfo.getLevel());
+                return viewLayout;
+            }
+        };
+        treeView.setTreeViewAdapter(adapter);
     }
 
-    private Map<String, String> getMap(final int rowIndex) {
-        final Map<String, String> rowMap = new HashMap<String, String>();
-        final int currentLevel = levels[rowIndex];
-        updateAllLevelNumbersForCurrentAndHigherLevels(currentLevel);
-        String description = "Level " + currentLevel + " : ";
-        String separator = "";
-        for (int i = 0; i <= currentLevel; i++) {
-            description += separator + currentNumber[i];
-            separator = ".";
-        }
-        rowMap.put("Description", description);
-        rowMap.put("Level", Integer.toString(currentLevel));
-        return rowMap;
-    }
-
-    private void updateAllLevelNumbersForCurrentAndHigherLevels(final int currentLevel) {
-        currentNumber[currentLevel]++;
-        for (int i = currentLevel + 1; i <= maxLevel; i++) {
-            currentNumber[i] = -1;
-        }
-    }
 }

@@ -5,7 +5,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListAdapter;
 
-public class TreeViewListAdapter implements ListAdapter {
+public class TreeViewListChainedAdapter implements ListAdapter {
+
+    private final ListAdapter dependentAdapter;
+    private final TreeStateManager<Integer> treeStateManager;
+
+    public TreeViewListChainedAdapter(final ListAdapter dependentAdapter,
+            final TreeStateManager<Integer> treeStateManager) {
+        this.dependentAdapter = dependentAdapter;
+        this.treeStateManager = treeStateManager;
+        dependentAdapter.registerDataSetObserver(new DependentSetObserver());
+        initializeFromDependentAdapter();
+    }
+
+    private void initializeFromDependentAdapter() {
+        treeSetManager
+    }
+
     @Override
     public boolean areAllItemsEnabled() {
         return dependentAdapter.areAllItemsEnabled();
@@ -43,7 +59,7 @@ public class TreeViewListAdapter implements ListAdapter {
 
     @Override
     public boolean hasStableIds() {
-        return dependentAdapter.hasStableIds();
+        return true;
     }
 
     @Override
@@ -64,12 +80,6 @@ public class TreeViewListAdapter implements ListAdapter {
     @Override
     public boolean isEmpty() {
         return dependentAdapter.isEmpty();
-    }
-
-    private final ListAdapter dependentAdapter;
-
-    public TreeViewListAdapter(final ListAdapter dependentAdapter) {
-        this.dependentAdapter = dependentAdapter;
     }
 
 }
