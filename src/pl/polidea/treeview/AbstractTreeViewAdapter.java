@@ -76,12 +76,12 @@ public abstract class AbstractTreeViewAdapter<T> implements ListAdapter {
 
     private void calculateIndentWidth() {
         if (expandedDrawable != null) {
-            setIndentWidth(Math.max(getIndentWidth(),
-                    expandedDrawable.getIntrinsicWidth()));
+            indentWidth = Math.max(getIndentWidth(),
+                    expandedDrawable.getIntrinsicWidth());
         }
         if (collapsedDrawable != null) {
-            setIndentWidth(Math.max(getIndentWidth(),
-                    collapsedDrawable.getIntrinsicWidth()));
+            indentWidth = Math.max(getIndentWidth(),
+                    collapsedDrawable.getIntrinsicWidth());
         }
     }
 
