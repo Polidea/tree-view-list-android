@@ -1,0 +1,12 @@
+<FindBugsFilter>
+	<Match>
+		<Class name="~.*\.R" />
+	</Match>
+	<Match>
+		<Class name="~.*\.R\$.*" />
+	</Match>
+	<Match>
+		<Class name="~.*Application" />
+		<Bug code="ST"></Bug>
+	</Match>
+</FindBugsFilter>

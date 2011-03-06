@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This file is part of Polidea build system.
+     It is included in order to enable efficient project building using ant
+     DO NOT MODIFY THIS FILE without consulting Jarek. -->
+<project name="AndroidTemplate" default="build">
+    <!-- make sure to add the following line to your build file after importing
+         the template, so that it works fine in eclipse ant window as well:
+    <import file="${sdk.dir}/tools/ant/main_rules.xml" />
+    -->
+
+    <property file="project.properties" />
+    <property file="local.properties" />
+    <property file="server.properties" />
+    <property file="build.properties" />
+    <property file="default.properties" />
+    <property name="bin.dir" location="bin" />
+    <property name="unsigned.apk.file" location="${bin.dir}/${project.apk.name}-unsigned.apk" />
+    <property name="signed.apk.file" location="${bin.dir}/${project.apk.name}-signed.apk" />
+    <property name="release.apk.file" location="${bin.dir}/${project.apk.name}-release.apk" />
+    <property name="apk.file" location="${bin.dir}/${project.apk.name}.apk" />
+
+    <path id="android.antlibs">
+        <pathelement path="${sdk.dir}/tools/lib/anttasks.jar" />
+        <pathelement path="${sdk.dir}/tools/lib/sdklib.jar" />
+        <pathelement path="${sdk.dir}/tools/lib/androidprefs.jar" />
+    </path>
+
+    <target name="clean" description="cleans the project">
+        <delete dir="bin" failonerror="false" />
+        <delete dir="gen" failonerror="false" />
+        <delete dir="javadoc" failonerror="false" />
+        <delete file="res/raw/config.properties" failonerror="false"/>
+        <delete file="res/raw/local_config.properties" failonerror="false"/>
+    </target>
+
+    <taskdef name="setup" classname="com.android.ant.SetupTask" classpathref="android.antlibs" />
+    <setup import="no" />
+    <import file="${sdk.dir}/tools/ant/main_rules.xml" />
+
+    <target name="init">
+        <echo message="init"/>
+        <mkdir dir="bin" />
+        <mkdir dir="gen" />
+        <mkdir dir="javadoc" />
+    </target>
+
+    <target name="build" description="Build application" depends="init, release">
+        <echo message="built applications"/>
+        <echo message="copy ${release.apk.file} to ${apk.file}" />
+        <copy file="${release.apk.file}" tofile="${apk.file}" />
+    </target>
+
+    <!--ANALYSIS-->
+
+    <path id="findbugs.dir.jars">
+        <fileset dir="${findbugs.home.dir}/lib">
+            <include name="*.jar" />
+        </fileset>
+    </path>
+
+    <path id="checkstyle.home.id">
+        <fileset dir="${checkstyle.home.dir}">
+            <include name="*.jar" />
+        </fileset>
+    </path>
+
+    <path id="pmd.home.id">
+        <fileset dir="${pmd.home.dir}/lib">
+            <include name="*.jar" />
+        </fileset>
+    </path>
+
+    <target name="analysis" depends="init,compile" description="-> static code analysis">
+        <echo message="analysis"/>
+        <taskdef resource="checkstyletask.properties" classpathref="checkstyle.home.id" />
+        <checkstyle config="analysis/checkstyle.xml" failureProperty="checkstyle.failure" failOnViolation="false" classpathref="checkstyle.home.id">
+            <classpath path="${lib-classes-folder}" />
+            <classpath path="${out.dir}" />
+            <formatter type="xml" tofile="gen/checkstyle_report.xml" />
+            <fileset dir="${source.dir}" includes="**/*.java" />
+        </checkstyle>
+        <!-- get rid of checkstyle "Unable to get class information" error (bug in checkstyle!): -->
+        <replaceregexp file="gen/checkstyle_report.xml" flags="g">
+            <regexp pattern=".*error.*Unable to get class information.*\/.*"/>
+            <substitution expression=""/>
+        </replaceregexp>
+        <taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask" classpathref="pmd.home.id" />
+        <pmd shortFilenames="false" targetjdk="1.6" rulesetfiles="analysis/pmd.xml">
+            <formatter type="xml" toFile="gen/pmd_report.xml" />
+            <fileset dir="${source.dir}" includes="**/*.java" />
+        </pmd>
+
+        <taskdef name="cpd" classname="net.sourceforge.pmd.cpd.CPDTask" classpathref="pmd.home.id" />
+        <cpd minimumTokenCount="100" outputFile="gen/cpd_report.xml" format="xml">
+            <fileset dir="${source.dir}" includes="**/*.java" />
+        </cpd>
+
+        <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpathref="findbugs.dir.jars" />
+        <findbugs home="${findbugs.home.dir}" output="xml" outputFile="gen/findbugs_report.xml" excludefilter="analysis/findbugs_exclude.xml">
+            <sourcePath path="${source.dir}" />
+            <class location="${out.dir}" />
+        </findbugs>
+    </target>
+
+    <target name="javadoc" depends="init" description="--> builds javadoc ">
+        <echo message="javadoc"/>
+        <delete dir="javadoc" failonerror="false"/>
+        <mkdir dir="javadoc" />
+        <javadoc destdir="javadoc" author="false" version="false" overview="${javadoc.overview.location}" encoding="utf-8">
+            <packageset dir="src" defaultexcludes="yes">
+                <include name="**" />
+            </packageset>
+            <doctitle>
+                <![CDATA[<h1>${javadoc.title}</h1>]]>
+			</doctitle>
+       </javadoc>
+    </target>
+
+    <target name="clean-ota" depends="clean" description="Cleans ota directory">
+        <delete dir="ota"/>
+    </target>
+
+    <target name="prepare-configuration" description="Prepares configuration based on release.name property (release.name might be development, production, stealth)" if="release.name">
+        <copy todir="res/raw/">
+            <fileset dir="release/${release.name}" includes="*">
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="create-copy-apk-and-rename" description="Renames release apk's to the right ones depending on the release.name" if="release.name">
+        <mkdir dir="ota"/>
+        <mkdir dir="ota/${release.name}"/>
+        <copy todir="ota/${release.name}">
+            <fileset dir="bin">
+                <include name="*.apk"/>
+            </fileset>
+            <mapper type="glob" from="*.apk" to="${release.name}-*.apk">
+            </mapper>
+        </copy>
+    </target>
+
+    <target name="build-release" description="Builds single release (need to have release.name property defined)" if="release.name">
+        <antcall target="clean">
+        </antcall>
+        <antcall target="prepare-configuration">
+        </antcall>
+        <antcall target="build">
+        </antcall>
+        <antcall target="create-copy-apk-and-rename">
+        </antcall>
+    </target>
+
+    <target name="build-all-releases" description="Builds all standard releases">
+        <antcall target="build-release">
+            <param name="release.name" value="production"/>
+        </antcall>
+        <antcall target="build-release">
+            <param name="release.name" value="stealth"/>
+        </antcall>
+        <antcall target="build-release">
+            <param name="release.name" value="development"/>
+        </antcall>
+    </target>
+
+
+
+</project>

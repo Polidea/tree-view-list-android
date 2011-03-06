@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="APPLICATION_NAME" default="build">
+    <property name='dummyAssignmentThatMakesImportWorkInEclipseWithAnt18' value=''/>
+    <import file="build_android_template.xml"/>
+    <import file="${sdk.dir}/tools/ant/main_rules.xml" />
+</project>
