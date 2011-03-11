@@ -26,8 +26,7 @@ class SimpleStandardAdapter extends AbstractTreeViewAdapter<Long> {
 
     private final OnCheckedChangeListener onCheckedChange = new OnCheckedChangeListener() {
         @Override
-        public void onCheckedChanged(final CompoundButton buttonView,
-                final boolean isChecked) {
+        public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
             final Long id = (Long) buttonView.getTag();
             changeSelected(isChecked, id);
         }
@@ -42,10 +41,8 @@ class SimpleStandardAdapter extends AbstractTreeViewAdapter<Long> {
         }
     }
 
-    public SimpleStandardAdapter(final TreeViewListDemo treeViewListDemo,
-            final Set<Long> selected,
-            final TreeStateManager<Long> treeStateManager,
-            final int numberOfLevels) {
+    public SimpleStandardAdapter(final TreeViewListDemo treeViewListDemo, final Set<Long> selected,
+            final TreeStateManager<Long> treeStateManager, final int numberOfLevels) {
         super(treeViewListDemo, treeStateManager, numberOfLevels);
         this.selected = selected;
     }
@@ -57,23 +54,19 @@ class SimpleStandardAdapter extends AbstractTreeViewAdapter<Long> {
 
     @Override
     public View getNewChildView(final TreeNodeInfo<Long> treeNodeInfo) {
-        final LinearLayout viewLayout = (LinearLayout) getActivity()
-                .getLayoutInflater().inflate(R.layout.demo_list_item, null);
+        final LinearLayout viewLayout = (LinearLayout) getActivity().getLayoutInflater().inflate(
+                R.layout.demo_list_item, null);
         return updateView(viewLayout, treeNodeInfo);
     }
 
     @Override
-    public LinearLayout updateView(final View view,
-            final TreeNodeInfo<Long> treeNodeInfo) {
+    public LinearLayout updateView(final View view, final TreeNodeInfo<Long> treeNodeInfo) {
         final LinearLayout viewLayout = (LinearLayout) view;
-        final TextView descriptionView = (TextView) viewLayout
-                .findViewById(R.id.demo_list_item_description);
-        final TextView levelView = (TextView) viewLayout
-                .findViewById(R.id.demo_list_item_level);
+        final TextView descriptionView = (TextView) viewLayout.findViewById(R.id.demo_list_item_description);
+        final TextView levelView = (TextView) viewLayout.findViewById(R.id.demo_list_item_level);
         descriptionView.setText(getDescription(treeNodeInfo.getId()));
         levelView.setText(Integer.toString(treeNodeInfo.getLevel()));
-        final CheckBox box = (CheckBox) viewLayout
-                .findViewById(R.id.demo_list_checkbox);
+        final CheckBox box = (CheckBox) viewLayout.findViewById(R.id.demo_list_checkbox);
         box.setTag(treeNodeInfo.getId());
         if (treeNodeInfo.isWithChildren()) {
             box.setVisibility(View.GONE);
@@ -93,8 +86,7 @@ class SimpleStandardAdapter extends AbstractTreeViewAdapter<Long> {
             super.handleItemClick(view, id);
         } else {
             final ViewGroup vg = (ViewGroup) view;
-            final CheckBox cb = (CheckBox) vg
-                    .findViewById(R.id.demo_list_checkbox);
+            final CheckBox cb = (CheckBox) vg.findViewById(R.id.demo_list_checkbox);
             cb.performClick();
         }
     }

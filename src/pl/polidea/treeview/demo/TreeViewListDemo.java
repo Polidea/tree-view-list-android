@@ -31,8 +31,8 @@ public class TreeViewListDemo extends Activity {
     private static final String TAG = TreeViewListDemo.class.getSimpleName();
     private TreeViewList treeView;
 
-    private static final int[] DEMO_NODES = new int[] { 0, 0, 1, 1, 1, 2, 2, 1,
-            1, 2, 1, 0, 0, 0, 1, 2, 3, 2, 0, 0, 1, 2, 0, 1, 2, 0, 1 };
+    private static final int[] DEMO_NODES = new int[] { 0, 0, 1, 1, 1, 2, 2, 1, 1, 2, 1, 0, 0, 0, 1, 2, 3, 2, 0, 0, 1,
+            2, 0, 1, 2, 0, 1 };
     private static final int LEVEL_NUMBER = 4;
     private final TreeStateManager<Long> manager = new InMemoryTreeStateManager<Long>();
     private final TreeBuilder<Long> treeBuilder = new TreeBuilder<Long>(manager);
@@ -48,10 +48,8 @@ public class TreeViewListDemo extends Activity {
         }
         Log.d(TAG, manager.toString());
         treeView = (TreeViewList) findViewById(R.id.mainTreeView);
-        fancyAdapter = new FancyColouredVariousSizesAdapter(this, selected,
-                manager, LEVEL_NUMBER);
-        simpleAdapter = new SimpleStandardAdapter(this, selected, manager,
-                LEVEL_NUMBER);
+        fancyAdapter = new FancyColouredVariousSizesAdapter(this, selected, manager, LEVEL_NUMBER);
+        simpleAdapter = new SimpleStandardAdapter(this, selected, manager, LEVEL_NUMBER);
         treeView.setAdapter(simpleAdapter);
         registerForContextMenu(treeView);
     }
@@ -65,16 +63,13 @@ public class TreeViewListDemo extends Activity {
 
     @Override
     public boolean onPrepareOptionsMenu(final Menu menu) {
-        final MenuItem collapsibleMenu = menu
-                .findItem(R.id.collapsible_menu_item);
+        final MenuItem collapsibleMenu = menu.findItem(R.id.collapsible_menu_item);
         if (treeView.isCollapsible()) {
             collapsibleMenu.setTitle(R.string.collapsible_menu_disable);
-            collapsibleMenu.setTitleCondensed(getResources().getString(
-                    R.string.collapsible_condensed_disable));
+            collapsibleMenu.setTitleCondensed(getResources().getString(R.string.collapsible_condensed_disable));
         } else {
             collapsibleMenu.setTitle(R.string.collapsible_menu_enable);
-            collapsibleMenu.setTitleCondensed(getResources().getString(
-                    R.string.collapsible_condensed_enable));
+            collapsibleMenu.setTitleCondensed(getResources().getString(R.string.collapsible_condensed_enable));
         }
         return super.onPrepareOptionsMenu(menu);
     }
@@ -104,8 +99,7 @@ public class TreeViewListDemo extends Activity {
     }
 
     @Override
-    public void onCreateContextMenu(final ContextMenu menu, final View v,
-            final ContextMenuInfo menuInfo) {
+    public void onCreateContextMenu(final ContextMenu menu, final View v, final ContextMenuInfo menuInfo) {
         final AdapterContextMenuInfo adapterInfo = (AdapterContextMenuInfo) menuInfo;
         final long id = adapterInfo.id;
         final TreeNodeInfo<Long> info = manager.getNodeInfo(id);
@@ -124,8 +118,7 @@ public class TreeViewListDemo extends Activity {
 
     @Override
     public boolean onContextItemSelected(final MenuItem item) {
-        final AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
-                .getMenuInfo();
+        final AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
         final long id = info.id;
         switch (item.getItemId()) {
         case R.id.context_menu_collapse:
