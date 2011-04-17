@@ -4,19 +4,19 @@
      DO NOT MODIFY THIS FILE without consulting Jarek.
       -->
 <project name="Android Manage template">
-     <property file="project.properties" />
-     <property file="local.properties" />
-     <property file="server.properties" />
-     <property file="build.properties" />
-     <property file="default.properties" />
-     <property name="bin.dir" location="bin" />
-     <property name="ota.dir" location="ota" />
-     <property name="unsigned.apk.file" value="${project.apk.name}-unsigned.apk" />
-     <property name="signed.apk.file" value="${project.apk.name}-signed.apk" />
-     <property name="release.apk.file" value="${project.apk.name}-release.apk" />
-     <property name="apk.file" value="${project.apk.name}.apk" />
-     <property name="file.version" value="version.txt" />
-     <property name="template.url.prefix" value="http://dev.polidea.pl/ext/polidea_templates/android-template/polidea_android_template/"/>
+    <property file="project.properties" />
+    <property file="local.properties" />
+    <property file="server.properties" />
+    <property file="build.properties" />
+    <property file="default.properties" />
+    <property name="bin.dir" location="bin" />
+    <property name="ota.dir" location="ota" />
+    <property name="unsigned.apk.file" value="${project.apk.name}-unsigned.apk" />
+    <property name="signed.apk.file" value="${project.apk.name}-signed.apk" />
+    <property name="release.apk.file" value="${project.apk.name}-release.apk" />
+    <property name="apk.file" value="${project.apk.name}.apk" />
+    <property name="file.version" value="version.txt" />
+    <property name="template.url.prefix" value="http://dev.polidea.pl/ext/polidea_templates/android-template/polidea_android_template/" />
 
     <taskdef resource="net/sourceforge/ant4hg/taskdefs/antlib.xml" classpath="build-libs/ant4hg-V0.07.jar" />
     <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="build-libs/ant-contrib-1.0b3.jar" />
@@ -65,6 +65,7 @@
     </target>
 
     <target name="checkout-libraries" description="--> Checks out the libraries the project depends on" depends="checkout.lib.1, checkout.lib.2, checkout.lib.3, checkout.lib.4, checkout.lib.5, checkout.lib.6">
+
     </target>
 
     <!-- deployment -->
@@ -72,7 +73,7 @@
     <property environment="env" />
 
     <target name="pre-release" description="--> performs pre release operations (set versions)">
-        <echo message="pre-release"/>
+        <echo message="pre-release" />
         <fail unless="env.RELEASE_VERSION" message="Environment RELEASE_VERSION must be defined" />
         <property name="android.manifest.file" value="AndroidManifest.xml" />
         <propertyfile file="${file.version}">
@@ -84,14 +85,15 @@
         <replaceregexp file="${android.manifest.file}" match="android:versionCode.*=.*&quot;.*&quot;" replace="android:versionCode=&quot;${app.current.version.code}&quot;" byline="true" />
         <replaceregexp file="${android.manifest.file}" match="android:versionName.*=.*&quot;.*&quot;" replace="android:versionName=&quot;${env.RELEASE_VERSION}&quot;" byline="true" />
         <hg cmd="commit" dir="." message="Incrementing application version to ${env.RELEASE_VERSION} (${app.current.version.code})" user="${hg.user}" />
-        <exec executable="hg"> <!-- no tag support in ant4hg :( -->
-            <arg value="tag"/>
-            <arg value="-u"/>
-            <arg value="${hg.user}"/>
-            <arg value="-f"/>
-            <arg value="Release_${env.RELEASE_VERSION}_${app.current.version.code}"/>
+        <exec executable="hg">
+            <!-- no tag support in ant4hg :( -->
+            <arg value="tag" />
+            <arg value="-u" />
+            <arg value="${hg.user}" />
+            <arg value="-f" />
+            <arg value="Release_${env.RELEASE_VERSION}_${app.current.version.code}" />
         </exec>
-        <hg cmd="push" dir="." revision="default"/>
+        <hg cmd="push" dir="." revision="default" />
     </target>
 
     <!-- Note! They cannot be set at the top of the file because pre-release
@@ -104,121 +106,290 @@
         <property name="full.version.name" value="${env.RELEASE_VERSION}_${app.current.version.code}" />
         <property name="versioned.dir" location="${release.subdirectory.dir}/${full.version.name}" />
         <property name="apk.file.name" value="${project.apk.name}-${full.version.name}.apk" />
-        <property name="javadoc.file.name" value="${project.apk.name}-javadoc-${full.version.name}.zip"/>
-        <property name="sources.file.name" value="${project.apk.name}-src-${full.version.name}.zip"/>
+        <property name="javadoc.file.name" value="${project.apk.name}-javadoc-${full.version.name}.zip" />
+        <property name="sources.file.name" value="${project.apk.name}-src-${full.version.name}.zip" />
     </target>
 
     <target name="javadoc-zip" depends="setup.post-release.properties" description="Builds javadoc zip file">
-        <echo message="javadoc-zip"/>
+        <echo message="javadoc-zip" />
         <zip destfile="bin/${javadoc.file.name}" update="false">
-            <zipfileset dir="javadoc"/>
+            <zipfileset dir="javadoc" />
         </zip>
     </target>
 
     <target name="sources-zip" depends="setup.post-release.properties" description="Builds sources zip file">
-        <echo message="sources-zip"/>
-         <zip destfile="bin/${sources.file.name}" update="false">
-             <zipfileset dir=".">
-                 <exclude name=".hg/**"/>
-                 <exclude name="bin/**"/>
-                 <exclude name="gen/**"/>
-                 <exclude name="doc/**"/>
-                 <exclude name="javadoc/**"/>
-             </zipfileset>
-         </zip>
-      </target>
+        <echo message="sources-zip" />
+        <zip destfile="bin/${sources.file.name}" update="false">
+            <zipfileset dir=".">
+                <exclude name=".hg/**" />
+                <exclude name="bin/**" />
+                <exclude name="gen/**" />
+                <exclude name="doc/**" />
+                <exclude name="javadoc/**" />
+                <exclude name="ota/**" />
+                <exclude name="tmp*" />
+                <exclude name="tmpcoverage/**" />
+                <exclude name="outinstr/**" />
+            </zipfileset>
+        </zip>
+    </target>
 
-    <target name="download-qrcode">
-        <urlencode property="url.encoded" value="${url}"/>
-        <get src="https://chart.googleapis.com/chart?cht=qr&amp;chs=256x256&amp;chl=${url.encoded}" dest="${qrcode.png.file}"/>
+    <target name="no-build-scripts-sources-zip" depends="setup.post-release.properties" description="Builds sources zip file">
+        <echo message="sources-zip" />
+        <zip destfile="bin/no-build-${sources.file.name}" update="false">
+            <zipfileset dir=".">
+                <exclude name=".hg/**" />
+                <exclude name="bin/**" />
+                <exclude name="gen/**" />
+                <exclude name="doc/**" />
+                <exclude name="analysis/**" />
+                <exclude name="javadoc/**" />
+                <exclude name="ota/**" />
+                <exclude name="template/**" />
+                <exclude name="build*.xml" />
+                <exclude name="project.properties" />
+                <exclude name="version.txt" />
+                <exclude name="ChangeVersion.py" />
+                <exclude name="tmp*" />
+                <exclude name="tmpcoverage/**" />
+                <exclude name="outinstr/**" />
+                <exclude name="build-libs/**" />
+            </zipfileset>
+        </zip>
     </target>
 
 
-    <target name="post-release" description="--> performs post release operations" depends="setup.post-release.properties, javadoc-zip, sources-zip">
-        <echo message="post-release" />
-        <mkdir dir="${release.subdirectory.dir}" />
-        <mkdir dir="${versioned.dir}" />
-        <mkdir dir="${versioned.dir}/development" />
-        <mkdir dir="${versioned.dir}/stealth" />
-        <mkdir dir="${versioned.dir}/production" />
-        <copy file="${ota.dir}/development/development-${apk.file}" tofile="${versioned.dir}/development/development-${apk.file.name}" />
-        <copy file="${ota.dir}/stealth/stealth-${apk.file}" tofile="${versioned.dir}/stealth/stealth-${apk.file.name}" />
-        <copy file="${ota.dir}/production/production-${apk.file}" tofile="${versioned.dir}/production/production-${apk.file.name}" />
-        <property name="development.url" value="${release.url}${versioned.dir}/development/development-${apk.file.name}"/>
-        <property name="stealth.url" value="${release.url}${versioned.dir}/stealth/stealth-${apk.file.name}"/>
-        <property name="production.url" value="${release.url}${versioned.dir}/production/production-${apk.file.name}"/>
-        <echo message="New release at:" />
-        <echo message="${development.url}" />
-        <echo message="${stealth.url}" />
-        <echo message="${production.url}" />
-        <antcall target="download-qrcode">
-            <param name="url" value="${development.url}"/>
-            <param name="qrcode.png.file" value="${versioned.dir}/development/development-qrcode.png"/>
+    <target name="download-qrcode">
+        <urlencode property="url.encoded" value="${url}" />
+        <get src="https://chart.googleapis.com/chart?cht=qr&amp;chs=256x256&amp;chl=${url.encoded}" dest="${qrcode.png.file}" />
+    </target>
+
+    <target name="release-montage">
+        <fileset id="montage.fileset" dir="res">
+            <include name="**/*.jpg" />
+            <include name="**/*.jpeg" />
+            <include name="**/*.exif" />
+            <include name="**/*.png" />
+            <include name="**/*.bmp" />
+            <include name="**/*.gif" />
+            <include name="**/*.tif" />
+            <include name="**/*.tiff" />
+            <include name="**/*.raw" />
+            <include name="**/*.svg" />
+            <include name="**/*.webp" />
+            <include name="**/*.JPG" />
+            <include name="**/*.JPEG" />
+            <include name="**/*.EXIF" />
+            <include name="**/*.PNG" />
+            <include name="**/*.BMP" />
+            <include name="**/*.GIF" />
+            <include name="**/*.TIF" />
+            <include name="**/*.TIFF" />
+            <include name="**/*.RAW" />
+            <include name="**/*.SVG" />
+            <include name="**/*.WEBP" />
+        </fileset>
+        <pathconvert pathsep="${line.separator}" property="images" refid="montage.fileset" />
+        <echo file="gen/montage_images.txt">${images}</echo>
+        <exec executable="montage" dir="gen">
+            <arg value="@montage_images.txt" />
+            <arg value="montage_images.jpg" />
+        </exec>
+        <tstamp>
+        </tstamp>
+        <exec executable="convert" dir="gen">
+            <arg value="montage_images.jpg" />
+            <arg value="-font" />
+            <arg value="helvetica" />
+            <arg value="-pointsize" />
+            <arg value="36" />
+            <arg value="-draw" />
+            <arg value="gravity southwest fill black text 0,12 '${project.apk.name} Release_${env.RELEASE_VERSION}_${app.current.version.code} released ${DSTAMP} ${TSTAMP}' fill blue text 1,11" />
+            <arg value="montage_converted_images.jpg" />
+        </exec>
+        <copy file="gen/montage_converted_images.jpg" tofile="${versioned.dir}/montage_converted_images.jpg" />
+    </target>
+
+    <target name="copy.release" description="Copies release to external dir (need to have release.name property defined)" if="release.name">
+        <mkdir dir="${versioned.dir}/${release.name}" />
+        <copy file="${ota.dir}/${release.name}/${release.name}-${apk.file}" tofile="${versioned.dir}/${release.name}/${release.name}-${apk.file.name}" />
+        <property name="release.full.url" value="${release.url}${versioned.dir}/${release.name}/${release.name}-${apk.file.name}" />
+        <property name="release.ota.url" value="${release.url}${versioned.dir}/${release.name}/index.html" />
+        <echo message="New release: ${release.full.url}" />
+        <antcall target="prepare.ota.release" inheritall="true">
         </antcall>
         <antcall target="download-qrcode">
-            <param name="url" value="${stealth.url}"/>
-            <param name="qrcode.png.file" value="${versioned.dir}/stealth/stealth-qrcode.png"/>
+            <param name="url" value="${release.ota.url}" />
+            <param name="qrcode.png.file" value="${versioned.dir}/${release.name}/${release.name}-qrcode.png" />
         </antcall>
-        <antcall target="download-qrcode">
-            <param name="url" value="${production.url}"/>
-            <param name="qrcode.png.file" value="${versioned.dir}/production/production-qrcode.png"/>
-        </antcall>
-        <mail from="${from.release.mail}" tolist="${to.release.mail}" subject="${project.apk.name} released. Version ${env.RELEASE_VERSION}">
-            <message><![CDATA[Project ${project.apk.name} released version ${env.RELEASE_VERSION}.
+        <echo file="${message.file}" append="true">
+            <![CDATA[
+   <li>Apk file: <a href="${release.full.url}">${release.name} - ${full.version.name}</a></li>
+   <li>OTA installation: <a href="${release.ota.url}">${release.name} - ${full.version.name}</a></li>
+]]></echo>
 
-The application is available here:
-   Development version: ${release.url}${versioned.dir}/development/development-${apk.file.name}
-   Stealth version: ${release.url}${versioned.dir}/stealth/stealth-${apk.file.name}
-   Production version: ${release.url}${versioned.dir}/production/production-${apk.file.name}
+</target>
 
-Javadocs and sources are available in Jenkins only (for security reason).
-
-Have fun!
-
-Your Jenkins.
-]]></message>
+<target name="post-release" description="--> performs post release operations" depends="setup.post-release.properties, javadoc-zip, sources-zip, no-build-scripts-sources-zip, preprocess.txt2tags.files">
+    <echo message="post-release" />
+    <mkdir dir="${release.subdirectory.dir}" />
+    <mkdir dir="${versioned.dir}" />
+    <property name="image.montage.url" value="${release.url}${versioned.dir}/montage_converted_images.jpg" />
+    <echo message="Image montage at: ${image.montage.url}" />
+    <antcall target="release-montage">
+    </antcall>
+    <property name="message.file" location="gen/message.html" />
+    <delete file="${message.file}" failonerror="false" />
+    <echo file="${message.file}" append="true">
+        <![CDATA[<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head><body>
+        Project <b>${project.apk.name}</b> released version ${env.RELEASE_VERSION}_${app.current.version.code}<p>
+]]></echo>
+    <echo file="${message.file}" append="true">
+        <![CDATA[<ul>]]></echo>
+    <dirset id="release.configurations.dirset" dir="release">
+        <include name="*" />
+    </dirset>
+    <pathconvert pathsep="," property="release.configurations" refid="release.configurations.dirset">
+        <mapper type="flatten" />
+    </pathconvert>
+    <foreach list="${release.configurations}" target="copy.release" param="release.name" inheritall="true">
+    </foreach>
+    <echo file="${message.file}" append="true">
+        <![CDATA[</ul>]]></echo>
+    <echo message="Image montage at:" />
+    <echo message="${release.url}${versioned.dir}/montage_converted_images.jpg" />
+    <echo file="${message.file}" append="true">
+        <![CDATA[<p>
+You can see montage of <a href="${release.url}${versioned.dir}/montage_converted_images.jpg">all images used in the project</a>
+        ]]></echo>
+    <echo file="${message.file}" append="true">
+        <![CDATA[<p><b>Description:</b><p>]]></echo>
+    <concat destfile="${message.file}" append="true">
+        <filelist dir="gen" files="DESCRIPTION.html"/>
+    </concat>
+    <echo file="${message.file}" append="true">
+        <![CDATA[<p><b>Release notes:</b><p>]]></echo>
+    <concat destfile="${message.file}" append="true">
+        <filelist dir="gen" files="RELEASE_NOTES.html"/>
+    </concat>
+    <echo file="${message.file}" append="true"><![CDATA[
+    <p>Have fun,<p>
+            <i>Your Jenkins</i>
+  <body>
+  </html>]]></echo>
+        <copy todir="gen">
+            <fileset dir="${versioned.dir}">
+                <include name="**/*-qrcode.png" />
+            </fileset>
+            <mapper type="flatten" />
+        </copy>
+        <mail from="${from.release.mail}" tolist="${to.release.mail}" subject="[Android] ${project.apk.name} released. Version ${env.RELEASE_VERSION}" encoding="auto">
+            <message src="${message.file}" charset="UTF-8" mimetype="text/html" />
             <attachments>
-                <fileset dir="${versioned.dir}">
-                    <include name="*/*-qrcode.png"/>
+                <fileset dir="gen">
+                    <include name="*-qrcode.png" />
                 </fileset>
             </attachments>
         </mail>
     </target>
 
+    <target name="preprocess.txt2tags.files">
+        <exec executable="txt2tags" dir="${basedir}" failonerror="true">
+            <arg value="-H"/>
+            <arg value="--encoding=utf-8"/>
+            <arg value="-o"/>
+            <arg value="gen/RELEASE_NOTES.html"/>
+            <arg value="-t"/>
+            <arg value="html"/>
+            <arg value="RELEASE_NOTES.txt"/>
+        </exec>
+        <exec executable="txt2tags" dir="${basedir}" failonerror="true">
+            <arg value="-H"/>
+            <arg value="--encoding=utf-8"/>
+            <arg value="-o"/>
+            <arg value="gen/DESCRIPTION.html"/>
+            <arg value="-t"/>
+            <arg value="html"/>
+            <arg value="DESCRIPTION.txt"/>
+        </exec>
+    </target>
+
+    <target name="prepare.ota.release">
+        <!-- release.name needed -->
+        <exec executable="python" dir="${basedir}" failonerror="true">
+            <arg value="Android-OTA/CreateOTA.py" />
+            <arg value="-n" />
+            <arg value="${project.apk.name}" />
+            <arg value="-d" />
+            <arg value="${versioned.dir}/${release.name}" />
+            <arg value="-u" />
+            <arg value="${release.full.url}" />
+            <arg value="-v" />
+            <arg value="${full.version.name}" />
+            <arg value="-r" />
+            <arg value="${release.name}" />
+            <arg value="-R" />
+            <arg value="gen/RELEASE_NOTES.html" />
+            <arg value="-D" />
+            <arg value="gen/DESCRIPTION.html" />
+        </exec>
+    </target>
+
+
     <target name="build-zip-template" description="Builds zip file from the template">
-        <property name="template.file" location="${basedir}/../polidea_android_template.zip"></property>
-        <delete file="${template.file}"></delete>
+        <property name="template.file" location="${basedir}/../polidea_android_template.zip">
+        </property>
+        <delete file="${template.file}">
+        </delete>
         <zip destfile="${template.file}">
-            <zipfileset dir ="${basedir}">
+            <zipfileset dir="${basedir}">
             </zipfileset>
         </zip>
     </target>
 
     <target name="download.file">
-        <get src="${template.url.prefix}${file}" dest="${file}" verbose="on"/>
+        <echo message="Downloading file: ${file}" />
+        <get src="${template.url.prefix}${file}" dest="${file}" verbose="on" />
+    </target>
+
+    <target name="check.if.file.exists">
+        <echo message="Checking if exists: ${file}" />
+        <available file="${file}" property="file.exists"/>
+    </target>
+
+    <target name="download.file.if.missing" depends="check.if.file.exists" unless="file.exists">
+        <echo message="Downloading missing file: ${file}" />
+        <get src="${template.url.prefix}${file}" dest="${file}" verbose="on" />
     </target>
 
     <target name="update.templates" description="Updates all templates">
-        <antcall target="download.file" ><param name="file" value="build_android_manage_template.xml"/></antcall>
-        <!-- just to make sure even new files added to manage template are downloaded -->
-        <ant antfile="build_android_manage_template.xml" target="update.all.files.from.template"/>
+        <antcall target="download.file">
+            <param name="file" value="build_android_manage_template.xml" />
+        </antcall>
+        <ant antfile="build_android_manage_template.xml" target="update.all.files.from.template"></ant>
+    </target>
+
+    <target name="mkdir">
+        <echo message="(Re)creating directory ${directory.to.create}"/>
+        <mkdir dir="${directory.to.create}"/>
     </target>
 
     <target name="update.all.files.from.template">
-        <mkdir dir="analysis"/>
-        <mkdir dir="build-libs"/>
-        <mkdir dir="cert"/>
         <mkdir dir="template"/>
-        <antcall target="download.file" ><param name="file" value="analysis/checkstyle.xml"/></antcall>
-        <antcall target="download.file" ><param name="file" value="analysis/findbugs_exclude.xml"/></antcall>
-        <antcall target="download.file" ><param name="file" value="analysis/pmd.xml"/></antcall>
-        <antcall target="download.file" ><param name="file" value="analysis/suppressions.xml"/></antcall>
-        <antcall target="download.file" ><param name="file" value="build-libs/ant4hg-V0.07.jar"/></antcall>
-        <antcall target="download.file" ><param name="file" value="build-libs/ant-contrib-1.0b3.jar"/></antcall>
-        <antcall target="download.file" ><param name="file" value="cert/debug.keystore"/></antcall>
-        <antcall target="download.file" ><param name="file" value="cert/default.keyset"/></antcall>
-        <antcall target="download.file" ><param name="file" value="template/ant.properties"/></antcall>
-        <antcall target="download.file" ><param name="file" value="build_android_template.xml"/></antcall>
+        <antcall target="download.file">
+            <param name="file" value="template/directories.txt" />
+        </antcall>
+        <antcall target="download.file">
+            <param name="file" value="template/files.txt" />
+        </antcall>
+        <antcall target="download.file">
+            <param name="file" value="template/files_if_missing.txt" />
+        </antcall>
+        <loadfile property="directories.to.create" srcfile="template/directories.txt"></loadfile>
+        <loadfile property="files.to.download" srcfile="template/files.txt"></loadfile>
+        <loadfile property="missing.files.to.download" srcfile="template/files_if_missing.txt"></loadfile>
+        <foreach list="${directories.to.create}" delimiter="${line.separator}" param="directory.to.create" target="mkdir"/>
+        <foreach list="${files.to.download}" delimiter="${line.separator}" param="file" target="download.file"/>
+        <foreach list="${missing.files.to.download}" delimiter="${line.separator}" param="file" target="download.file.if.missing"/>
     </target>
-
 </project>
