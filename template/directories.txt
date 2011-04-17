@@ -1,0 +1,15 @@
+analysis
+build-libs
+cert
+template
+test
+test/build-libs
+test/libs
+test/res
+test/res/drawable-hdpi
+test/res/drawable-ldpi
+test/res/drawable-mdpi
+test/res/values
+test/src
+Android-OTA
+Android-OTA/templates

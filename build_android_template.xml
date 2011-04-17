@@ -14,10 +14,15 @@
     <property file="build.properties" />
     <property file="default.properties" />
     <property name="bin.dir" location="bin" />
+    <property name="tests.dir" location="tests" />
+    <property name="src.dir" location="src" />
+    <property name="coverage.dir" location="coverage" />
+    <property name="tmpcoverage.dir" location="tmpcoverage" />
     <property name="unsigned.apk.file" location="${bin.dir}/${project.apk.name}-unsigned.apk" />
     <property name="signed.apk.file" location="${bin.dir}/${project.apk.name}-signed.apk" />
     <property name="release.apk.file" location="${bin.dir}/${project.apk.name}-release.apk" />
     <property name="apk.file" location="${bin.dir}/${project.apk.name}.apk" />
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="build-libs/ant-contrib-1.0b3.jar" />
 
     <path id="android.antlibs">
         <pathelement path="${sdk.dir}/tools/lib/anttasks.jar" />
@@ -25,12 +30,19 @@
         <pathelement path="${sdk.dir}/tools/lib/androidprefs.jar" />
     </path>
 
+    <path id="build.lib.path.id">
+        <fileset dir="build-libs" includes="*.jar" />
+    </path>
+
     <target name="clean" description="cleans the project">
         <delete dir="bin" failonerror="false" />
         <delete dir="gen" failonerror="false" />
         <delete dir="javadoc" failonerror="false" />
-        <delete file="res/raw/config.properties" failonerror="false"/>
-        <delete file="res/raw/local_config.properties" failonerror="false"/>
+        <delete dir="coverage" failonerror="false" />
+        <delete dir="outinstr" failonerror="false" />
+        <delete dir="tmpcoverage" failonerror="false" />
+        <delete file="res/raw/config.properties" failonerror="false" />
+        <delete file="res/raw/local_config.properties" failonerror="false" />
     </target>
 
     <taskdef name="setup" classname="com.android.ant.SetupTask" classpathref="android.antlibs" />
@@ -40,7 +52,11 @@
     <target name="init">
         <echo message="init"/>
         <mkdir dir="bin" />
+        <mkdir dir="bin/classes" />
         <mkdir dir="gen" />
+        <mkdir dir="outinstr" />
+        <mkdir dir="coverage"/>
+        <mkdir dir="tmpcoverage"/>
         <mkdir dir="javadoc" />
     </target>
 
@@ -110,9 +126,7 @@
             <packageset dir="src" defaultexcludes="yes">
                 <include name="**" />
             </packageset>
-            <doctitle>
-                <![CDATA[<h1>${javadoc.title}</h1>]]>
-			</doctitle>
+            <doctitle><![CDATA[<h1>${javadoc.title}</h1>]]></doctitle>
        </javadoc>
     </target>
 
@@ -139,7 +153,7 @@
         </copy>
     </target>
 
-    <target name="build-release" description="Builds single release (need to have release.name property defined)" if="release.name">
+    <target name="build.release" description="Builds single release (need to have release.name property defined)" if="release.name">
         <antcall target="clean">
         </antcall>
         <antcall target="prepare-configuration">
@@ -150,18 +164,36 @@
         </antcall>
     </target>
 
-    <target name="build-all-releases" description="Builds all standard releases">
-        <antcall target="build-release">
-            <param name="release.name" value="production"/>
-        </antcall>
-        <antcall target="build-release">
-            <param name="release.name" value="stealth"/>
-        </antcall>
-        <antcall target="build-release">
-            <param name="release.name" value="development"/>
-        </antcall>
+    <target name="build-all-releases" description="Builds all releases">
+        <dirset id="release.configurations.dirset" dir="release">
+            <include name="*"/>
+        </dirset>
+        <pathconvert pathsep="," property="release.configurations"
+            refid="release.configurations.dirset">
+            <mapper type="flatten"/>
+        </pathconvert>
+        <foreach list="${release.configurations}" target="build.release" param="release.name">
+        </foreach>
     </target>
 
-
+    <target name="-post-compile" if="enable.aop">
+        <echo message="Weaving aspects in following classes" />
+        <iajc destDir="${aop.output}" Xlintwarnings="true" showWeaveInfo="true" target="1.6" source="1.6">
+            <argfiles>
+                <pathelement location="aspects.lst" />
+            </argfiles>
+            <inpath>
+                <pathelement location="${out.classes.absolute.dir}" />
+            </inpath>
+            <classpath>
+                <pathelement location="${aspectj.home}/lib/aspectjrt.jar" />
+                <fileset dir="${jar.libs.dir}" includes="*.jar" />
+                <fileset dir="${jar.libs.absolute.dir}" includes="*.jar" />
+                <path refid="android.target.classpath" />
+            </classpath>
+        </iajc>
+        <move file="${out.classes.absolute.dir}" todir="bin/classes_not_weaved" />
+        <move file="${aop.output}/pl" todir="bin/classes" />
+    </target>
 
 </project>
