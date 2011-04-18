@@ -210,21 +210,13 @@
     </target>
 
     <target name="copy.release" description="Copies release to external dir (need to have release.name property defined)" if="release.name">
+        <var name="release.full.url" value="${release.url}${versioned.dir}/${release.name}/${release.name}-${apk.file.name}" />
         <mkdir dir="${versioned.dir}/${release.name}" />
         <copy file="${ota.dir}/${release.name}/${release.name}-${apk.file}" tofile="${versioned.dir}/${release.name}/${release.name}-${apk.file.name}" />
-        <property name="release.full.url" value="${release.url}${versioned.dir}/${release.name}/${release.name}-${apk.file.name}" />
-        <property name="release.ota.url" value="${release.url}${versioned.dir}/${release.name}/index.html" />
-        <echo message="New release: ${release.full.url}" />
-        <antcall target="prepare.ota.release" inheritall="true">
-        </antcall>
-        <antcall target="download-qrcode">
-            <param name="url" value="${release.ota.url}" />
-            <param name="qrcode.png.file" value="${versioned.dir}/${release.name}/${release.name}-qrcode.png" />
-        </antcall>
+        <echo message="Apk for ${release.name}: ${release.full.url}" />
         <echo file="${message.file}" append="true">
             <![CDATA[
-   <li>Apk file: <a href="${release.full.url}">${release.name} - ${full.version.name}</a></li>
-   <li>OTA installation: <a href="${release.ota.url}">${release.name} - ${full.version.name}</a></li>
+   <li>Apk for ${release.name}: <a href="${release.full.url}">${release.full.url}</a></li>
 ]]></echo>
 
 </target>
@@ -251,10 +243,22 @@
     <pathconvert pathsep="," property="release.configurations" refid="release.configurations.dirset">
         <mapper type="flatten" />
     </pathconvert>
+    <antcall target="prepare.ota.release" inheritall="true">
+    </antcall>
     <foreach list="${release.configurations}" target="copy.release" param="release.name" inheritall="true">
     </foreach>
     <echo file="${message.file}" append="true">
         <![CDATA[</ul>]]></echo>
+    <property name="release.ota.url" value="${release.url}${versioned.dir}/index.html" />
+    <echo message="OTA release: ${release.ota.url}" />
+    <echo file="${message.file}" append="true">
+        <![CDATA[<p>
+OTA release is available <a href="${release.ota.url}">here</a> (also attached as QR code)
+        ]]></echo>
+    <antcall target="download-qrcode">
+        <param name="url" value="${release.ota.url}" />
+        <param name="qrcode.png.file" value="${versioned.dir}/qrcode.png" />
+    </antcall>
     <echo message="Image montage at:" />
     <echo message="${release.url}${versioned.dir}/montage_converted_images.jpg" />
     <echo file="${message.file}" append="true">
@@ -276,17 +280,12 @@ You can see montage of <a href="${release.url}${versioned.dir}/montage_converted
             <i>Your Jenkins</i>
   <body>
   </html>]]></echo>
-        <copy todir="gen">
-            <fileset dir="${versioned.dir}">
-                <include name="**/*-qrcode.png" />
-            </fileset>
-            <mapper type="flatten" />
-        </copy>
+        <copy todir="gen" file="${versioned.dir}/qrcode.png"/>
         <mail from="${from.release.mail}" tolist="${to.release.mail}" subject="[Android] ${project.apk.name} released. Version ${env.RELEASE_VERSION}" encoding="auto">
             <message src="${message.file}" charset="UTF-8" mimetype="text/html" />
             <attachments>
                 <fileset dir="gen">
-                    <include name="*-qrcode.png" />
+                    <include name="qrcode.png"/>
                 </fileset>
             </attachments>
         </mail>
@@ -313,20 +312,31 @@ You can see montage of <a href="${release.url}${versioned.dir}/montage_converted
         </exec>
     </target>
 
-    <target name="prepare.ota.release">
-        <!-- release.name needed -->
+    <target name="append.url">
+        <var name="release.full.url" value="${release.url}${versioned.dir}/${release.name}/${release.name}-${apk.file.name}" />
+        <echo append="true" file="${ota.url.file}" message="${release.full.url},"/>
+    </target>
+
+    <target name="build.ota.urls">
+        <property name="ota.url.file" location="gen/ota_url_file"/>
+        <delete file="${ota.url.file}"/>
+        <foreach list="${release.configurations}" param="release.name" inheritall="yes" target="append.url"/>
+    </target>
+
+    <target name="prepare.ota.release" depends="build.ota.urls">
+        <loadfile property="url.list" srcfile="${ota.url.file}"/>
         <exec executable="python" dir="${basedir}" failonerror="true">
             <arg value="Android-OTA/CreateOTA.py" />
             <arg value="-n" />
             <arg value="${project.apk.name}" />
             <arg value="-d" />
-            <arg value="${versioned.dir}/${release.name}" />
+            <arg value="${versioned.dir}" />
             <arg value="-u" />
-            <arg value="${release.full.url}" />
+            <arg value="${url.list}" />
             <arg value="-v" />
             <arg value="${full.version.name}" />
             <arg value="-r" />
-            <arg value="${release.name}" />
+            <arg value="${release.configurations}" />
             <arg value="-R" />
             <arg value="gen/RELEASE_NOTES.html" />
             <arg value="-D" />

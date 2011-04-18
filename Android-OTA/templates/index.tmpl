@@ -14,7 +14,7 @@ function onLoad() {
 $(document).ready(function() {
 
   if (navigator.userAgent.match(/Android/i)) {
-    window.scrollTo(0,0); // reset in case prev not scrolled  
+    window.scrollTo(0,0); // reset in case prev not scrolled
     var nPageH = $(document).height();
     var nViewH = window.outerHeight;
     if (nViewH > nPageH) {
@@ -27,8 +27,8 @@ $(document).ready(function() {
 });
 }
 
-function load() {
-	var load = window.location = "{releaseUrl}";
+function load(url) {
+	var load = window.location = url;
 }
 // -->
 </Script>
@@ -46,26 +46,25 @@ function load() {
 				<header style="text-align:center;">
 					<h3><div>Hello and Welcome!</div></h3>
 				</header>
-				<p><div>We're really excited that we can share {appName} test version with you!</div>
-				<div>To download - simply scroll down and press download button.</div>
-				<div>Having problems with installation? See below for general help </div></p>
+				<p><div>{appName} test version is ready!</div>
 	</section>
 	</div>
 	<div>
-	<ul data-role="listview" data-inset="true" data-theme="a">
+	    <ul data-role="listview" data-inset="true" data-theme="a">
 				<li>
-					<h3><img src="Icon.png" height="81px"><a href="javascript:load()">Download</a></h3>
+					<h3><img src="Icon.png" height="81px"><a href="#description">Description</a></h3>
 					<p>{appName}</p>
 				</li>
-				<li>
-					<h3><a href="#description">Description</a></h3>
-				</li>
-				<li>
-					<h3><a href="#changelog">Changelog</a></h3>
-                    <p>{version}</p>
-                    <p>{release}</p>
-				</li>
-			</ul>
+                <li>
+                    <h3><a href="#changelog">Changelog: </a>{version}</h3>
+                </li>
+	   </ul>
+    </div>
+    Downloads:
+    <div>
+       <ul data-role="listview" data-inset="true" data-theme="a">
+                {downloads}
+       </ul>
     </div>
     <div> <!-- Help --!>
     <ul data-role="listview" data-inset="true">
