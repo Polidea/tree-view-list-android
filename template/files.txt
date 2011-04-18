@@ -1,4 +1,3 @@
-cert/debug.keystore
 template/ant.properties
 build_android_template.xml
 test/build_test_android_template.xml

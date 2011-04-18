@@ -1,6 +1,5 @@
 analysis
 build-libs
-cert
 template
 test
 test/build-libs

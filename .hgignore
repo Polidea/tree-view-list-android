@@ -19,6 +19,8 @@ syntax: regexp
 syntax: regexp
 ^test/bin$
 syntax: regexp
+^test/gen$
+syntax: regexp
 ^res/raw/.*config.properties$
 syntax:glob
 test/local.properties

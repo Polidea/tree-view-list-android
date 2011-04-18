@@ -11,9 +11,6 @@
     <property file="default.properties" />
     <property name="bin.dir" location="bin" />
     <property name="ota.dir" location="ota" />
-    <property name="unsigned.apk.file" value="${project.apk.name}-unsigned.apk" />
-    <property name="signed.apk.file" value="${project.apk.name}-signed.apk" />
-    <property name="release.apk.file" value="${project.apk.name}-release.apk" />
     <property name="apk.file" value="${project.apk.name}.apk" />
     <property name="file.version" value="version.txt" />
     <property name="template.url.prefix" value="http://dev.polidea.pl/ext/polidea_templates/android-template/polidea_android_template/" />
@@ -145,8 +142,10 @@
                 <exclude name="analysis/**" />
                 <exclude name="javadoc/**" />
                 <exclude name="ota/**" />
+                <exclude name="cert/**" />
                 <exclude name="template/**" />
                 <exclude name="build*.xml" />
+                <exclude name="build.properties" />
                 <exclude name="project.properties" />
                 <exclude name="version.txt" />
                 <exclude name="ChangeVersion.py" />

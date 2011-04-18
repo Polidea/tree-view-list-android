@@ -5,7 +5,6 @@ RELEASE_NOTES.txt
 version.txt
 proguard.cfg
 default.properties
-build.properties
 project.properties
 analysis/checkstyle.xml
 analysis/findbugs_exclude.xml
@@ -24,3 +23,4 @@ build-libs/nekoconv.jar
 test/build-libs/nekoconv.jar
 test/build-libs/robotium-solo-2.2.jar
 test/libs/polidea_test_runner_1.0.jar
+build.properties

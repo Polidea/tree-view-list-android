@@ -18,8 +18,7 @@
     <property name="src.dir" location="src" />
     <property name="coverage.dir" location="coverage" />
     <property name="tmpcoverage.dir" location="tmpcoverage" />
-    <property name="unsigned.apk.file" location="${bin.dir}/${project.apk.name}-unsigned.apk" />
-    <property name="signed.apk.file" location="${bin.dir}/${project.apk.name}-signed.apk" />
+    <property name="debug.apk.file" location="${bin.dir}/${project.apk.name}-debug.apk" />
     <property name="release.apk.file" location="${bin.dir}/${project.apk.name}-release.apk" />
     <property name="apk.file" location="${bin.dir}/${project.apk.name}.apk" />
     <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="build-libs/ant-contrib-1.0b3.jar" />
@@ -58,12 +57,24 @@
         <mkdir dir="coverage"/>
         <mkdir dir="tmpcoverage"/>
         <mkdir dir="javadoc" />
+        <available file="release/${release.name}/production_build.txt" property="production.build"/>
     </target>
 
-    <target name="build" description="Build application" depends="init, release">
-        <echo message="built applications"/>
+    <target name="build.debug.apk" unless="production.build" depends="init">
+        <echo message="building debug version"/>
+        <antcall target="debug" inheritall="true"></antcall>
+        <echo message="copy ${debug.apk.file} to ${apk.file}" />
+        <copy file="${debug.apk.file}" tofile="${apk.file}" />
+    </target>
+
+    <target name="build.release.apk" if="production.build" depends="init">
+        <echo message="building release version"/>
+        <antcall target="release" inheritall="true"></antcall>
         <echo message="copy ${release.apk.file} to ${apk.file}" />
-        <copy file="${release.apk.file}" tofile="${apk.file}" />
+        <copy file="${release.apk.file}" tofile="${apk.file}"/>
+    </target>
+
+    <target name="build" description="Build application" depends="build.release.apk, build.debug.apk">
     </target>
 
     <!--ANALYSIS-->
