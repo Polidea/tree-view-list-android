@@ -235,6 +235,14 @@
         <![CDATA[<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"></head><body>
         Project <b>${project.apk.name}</b> released version ${env.RELEASE_VERSION}_${app.current.version.code}<p>
 ]]></echo>
+    <echo message="OTA release: ${release.ota.url}" />
+    <echo file="${message.file}" append="true">
+        <![CDATA[<p>
+The easiest way to install the application is Over-The-Air installation. You can open it directly on the device.<br>
+OTA release is available here: <a href="${release.ota.url}">${release.ota.url}</a><br>
+You can also install it by scanning the QR code attached to the mail.<p>
+Separate .apk files are also available for download:
+        ]]></echo>
     <echo file="${message.file}" append="true">
         <![CDATA[<ul>]]></echo>
     <dirset id="release.configurations.dirset" dir="release">
@@ -250,11 +258,6 @@
     <echo file="${message.file}" append="true">
         <![CDATA[</ul>]]></echo>
     <property name="release.ota.url" value="${release.url}${versioned.dir}/index.html" />
-    <echo message="OTA release: ${release.ota.url}" />
-    <echo file="${message.file}" append="true">
-        <![CDATA[<p>
-OTA release is available <a href="${release.ota.url}">here</a> (also attached as QR code)
-        ]]></echo>
     <antcall target="download-qrcode">
         <param name="url" value="${release.ota.url}" />
         <param name="qrcode.png.file" value="${versioned.dir}/qrcode.png" />
@@ -263,7 +266,8 @@ OTA release is available <a href="${release.ota.url}">here</a> (also attached as
     <echo message="${release.url}${versioned.dir}/montage_converted_images.jpg" />
     <echo file="${message.file}" append="true">
         <![CDATA[<p>
-You can see montage of <a href="${release.url}${versioned.dir}/montage_converted_images.jpg">all images used in the project</a>
+You can see montage of <a href="${release.url}${versioned.dir}/montage_converted_images.jpg">all images used in the project</a>.<br>
+The image is also attached to the mail.
         ]]></echo>
     <echo file="${message.file}" append="true">
         <![CDATA[<p><b>Description:</b><p>]]></echo>
@@ -286,6 +290,7 @@ You can see montage of <a href="${release.url}${versioned.dir}/montage_converted
             <attachments>
                 <fileset dir="gen">
                     <include name="qrcode.png"/>
+                    <include name="montage_images.jpg"/>
                 </fileset>
             </attachments>
         </mail>
