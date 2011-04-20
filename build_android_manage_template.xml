@@ -150,6 +150,7 @@
                 <exclude name="version.txt" />
                 <exclude name="ChangeVersion.py" />
                 <exclude name="tmp*" />
+                <exclude name="Android-OTA/**" />
                 <exclude name="tmpcoverage/**" />
                 <exclude name="outinstr/**" />
                 <exclude name="build-libs/**" />
@@ -163,7 +164,7 @@
         <get src="https://chart.googleapis.com/chart?cht=qr&amp;chs=256x256&amp;chl=${url.encoded}" dest="${qrcode.png.file}" />
     </target>
 
-    <target name="release-montage">
+    <target name="release.montage">
         <fileset id="montage.fileset" dir="res">
             <include name="**/*.jpg" />
             <include name="**/*.jpeg" />
@@ -206,6 +207,7 @@
             <arg value="gravity southwest fill black text 0,12 '${project.apk.name} Release_${env.RELEASE_VERSION}_${app.current.version.code} released ${DSTAMP} ${TSTAMP}' fill blue text 1,11" />
             <arg value="montage_converted_images.jpg" />
         </exec>
+        <mkdir dir="${versioned.dir}" />
         <copy file="gen/montage_converted_images.jpg" tofile="${versioned.dir}/montage_converted_images.jpg" />
     </target>
 
@@ -221,14 +223,14 @@
 
 </target>
 
-<target name="post-release" description="--> performs post release operations" depends="setup.post-release.properties, javadoc-zip, sources-zip, no-build-scripts-sources-zip, preprocess.txt2tags.files">
+<target name="post-release" description="--> performs post release operations"
+    depends="setup.post-release.properties, javadoc-zip, sources-zip, no-build-scripts-sources-zip, release.montage, preprocess.txt2tags.files">
     <echo message="post-release" />
     <mkdir dir="${release.subdirectory.dir}" />
     <mkdir dir="${versioned.dir}" />
     <property name="image.montage.url" value="${release.url}${versioned.dir}/montage_converted_images.jpg" />
     <echo message="Image montage at: ${image.montage.url}" />
-    <antcall target="release-montage">
-    </antcall>
+    <property name="release.ota.url" value="${release.url}${versioned.dir}/index.html" />
     <property name="message.file" location="gen/message.html" />
     <delete file="${message.file}" failonerror="false" />
     <echo file="${message.file}" append="true">
@@ -257,7 +259,6 @@ Separate .apk files are also available for download:
     </foreach>
     <echo file="${message.file}" append="true">
         <![CDATA[</ul>]]></echo>
-    <property name="release.ota.url" value="${release.url}${versioned.dir}/index.html" />
     <antcall target="download-qrcode">
         <param name="url" value="${release.ota.url}" />
         <param name="qrcode.png.file" value="${versioned.dir}/qrcode.png" />
@@ -290,7 +291,7 @@ The image is also attached to the mail.
             <attachments>
                 <fileset dir="gen">
                     <include name="qrcode.png"/>
-                    <include name="montage_images.jpg"/>
+                    <include name="montage_converted_images.jpg"/>
                 </fileset>
             </attachments>
         </mail>
