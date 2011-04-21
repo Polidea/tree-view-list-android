@@ -286,8 +286,10 @@ The image is also attached to the mail.
   <body>
   </html>]]></echo>
         <copy todir="gen" file="${versioned.dir}/qrcode.png"/>
-        <mail from="${from.release.mail}" tolist="${to.release.mail}" subject="[Android] ${project.apk.name} released. Version ${env.RELEASE_VERSION}" encoding="auto">
-            <message src="${message.file}" charset="UTF-8" mimetype="text/html" />
+        <mail from="${from.release.mail}" tolist="${to.release.mail}"
+            subject="[Android] ${project.apk.name} released. Version ${env.RELEASE_VERSION}"
+            encoding="auto"
+            messagefile="${message.file}" messagemimetype="text/html">
             <attachments>
                 <fileset dir="gen">
                     <include name="qrcode.png"/>
@@ -380,6 +382,9 @@ The image is also attached to the mail.
     <target name="update.templates" description="Updates all templates">
         <antcall target="download.file">
             <param name="file" value="build_android_manage_template.xml" />
+        </antcall>
+        <antcall target="download.file.if.missing">
+            <param name="file" value="build-libs/ant-contrib-1.0b3.jar" />
         </antcall>
         <ant antfile="build_android_manage_template.xml" target="update.all.files.from.template"></ant>
     </target>
