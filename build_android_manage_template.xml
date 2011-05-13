@@ -411,5 +411,6 @@ The image is also attached to the mail.
         <foreach list="${directories.to.create}" delimiter="${line.separator}" param="directory.to.create" target="mkdir"/>
         <foreach list="${files.to.download}" delimiter="${line.separator}" param="file" target="download.file"/>
         <foreach list="${missing.files.to.download}" delimiter="${line.separator}" param="file" target="download.file.if.missing"/>
+        <delete file="test/libs/polidea_test_runner_1.0.jar" failonerror="false"/>
     </target>
 </project>

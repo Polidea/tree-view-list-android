@@ -6,7 +6,17 @@
 		<Class name="~.*\.R\$.*" />
 	</Match>
 	<Match>
-		<Class name="~.*Application" />
+		<Class name="~.*Application|.*Service" />
 		<Bug code="ST"></Bug>
 	</Match>
+    <Match>
+        <Bug code="DMI"></Bug>
+    </Match>
+    <Match>
+        <Bug code="Dm"></Bug>
+    </Match>
+    <Match>
+        <Bug code="MS"></Bug>
+    </Match>
+
 </FindBugsFilter>

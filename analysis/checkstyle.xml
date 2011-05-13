@@ -14,20 +14,20 @@
   <module name="TreeWalker">
     <property name="tabWidth" value="4"/>
     <module name="FileContentsHolder"/>
-    <module name="JavadocMethod">
-      <property name="scope" value="public"/>
-      <property name="allowMissingThrowsTags" value="true"/>
-      <property name="allowMissingReturnTag" value="true"/>
-      <property name="allowMissingJavadoc" value="true"/>
-      <property name="allowMissingPropertyJavadoc" value="true"/>
-      <property name="logLoadErrors" value="true"/>
-    </module>
+<!--     <module name="JavadocMethod"> -->
+<!--       <property name="scope" value="public"/> -->
+<!--       <property name="allowMissingThrowsTags" value="true"/> -->
+<!--       <property name="allowMissingReturnTag" value="true"/> -->
+<!--       <property name="allowMissingJavadoc" value="true"/> -->
+<!--       <property name="allowMissingPropertyJavadoc" value="true"/> -->
+<!--       <property name="logLoadErrors" value="true"/> -->
+<!--     </module> -->
     <module name="JavadocType">
       <property name="scope" value="public"/>
     </module>
-    <module name="JavadocVariable">
-      <property name="scope" value="public"/>
-    </module>
+<!--     <module name="JavadocVariable"> -->
+<!--       <property name="scope" value="public"/> -->
+<!--     </module> -->
     <module name="JavadocStyle"/>
     <module name="ConstantName"/>
     <module name="LocalFinalVariableName"/>
@@ -53,7 +53,7 @@
     <module name="OperatorWrap"/>
     <module name="ParenPad"/>
     <module name="TypecastParenPad"/>
-    <module name="WhitespaceAround"/>
+<!--     <module name="WhitespaceAround"/> -->
     <module name="ModifierOrder"/>
     <module name="RedundantModifier"/>
     <module name="AvoidNestedBlocks"/>
@@ -70,7 +70,7 @@
       <property name="tokens" value="VARIABLE_DEF"/>
     </module>
     <module name="IllegalInstantiation"/>
-    <module name="InnerAssignment"/>
+<!--     <module name="InnerAssignment"/> -->
     <module name="MissingSwitchDefault"/>
     <module name="RedundantThrows"/>
     <module name="SimplifyBooleanExpression"/>
@@ -78,7 +78,7 @@
     <module name="FinalClass"/>
     <module name="HideUtilityClassConstructor"/>
     <module name="InterfaceIsType"/>
-    <module name="VisibilityModifier"/>
+<!--     <module name="VisibilityModifier"/> -->
     <module name="ArrayTypeStyle"/>
     <module name="FinalParameters"/>
     <module name="TodoComment">

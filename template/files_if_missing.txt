@@ -6,10 +6,6 @@ version.txt
 proguard.cfg
 default.properties
 project.properties
-analysis/checkstyle.xml
-analysis/findbugs_exclude.xml
-analysis/pmd.xml
-analysis/suppressions.xml
 test/src/EmptyTest.java
 test/default.properties
 test/proguard.cfg
@@ -21,6 +17,6 @@ build-libs/junit.jar
 build-libs/nekoconv.jar
 test/build-libs/nekoconv.jar
 test/build-libs/robotium-solo-2.2.jar
-test/libs/polidea_test_runner_1.0.jar
+test/libs/polidea_test_runner_1.2.jar
 build.properties
 build.xml

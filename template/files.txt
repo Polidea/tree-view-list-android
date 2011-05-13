@@ -6,3 +6,7 @@ Android-OTA/CreateOTA.py
 Android-OTA/formater.py
 Android-OTA/IndexGenerator.py
 .hgignore
+analysis/checkstyle.xml
+analysis/findbugs_exclude.xml
+analysis/pmd.xml
+analysis/suppressions.xml

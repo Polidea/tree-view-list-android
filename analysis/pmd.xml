@@ -19,8 +19,8 @@
     <rule ref="rulesets/design.xml/SimplifyBooleanExpressions" />
     <rule ref="rulesets/design.xml/SwitchStmtsShouldHaveDefault" />
     <rule ref="rulesets/design.xml/AvoidDeeplyNestedIfStmts" />
-    <rule ref="rulesets/design.xml/AvoidReassigningParameters" />
-    <rule ref="rulesets/design.xml/SwitchDensity" />
+    <!--  <rule ref="rulesets/design.xml/AvoidReassigningParameters" /> -->
+    <!--  <rule ref="rulesets/design.xml/SwitchDensity" /> -->
     <rule ref="rulesets/design.xml/ConstructorCallsOverridableMethod" />
     <rule ref="rulesets/design.xml/AccessorClassGeneration" />
     <rule ref="rulesets/design.xml/FinalFieldCouldBeStatic" />
@@ -40,7 +40,7 @@
     <rule ref="rulesets/design.xml/AvoidProtectedFieldInFinalClass" />
     <rule ref="rulesets/design.xml/AssignmentToNonFinalStatic" />
     <rule ref="rulesets/design.xml/MissingStaticMethodInNonInstantiatableClass" />
-    <!--  <rule ref="rulesets/design.xml/AvoidSynchronizedAtMethodLevel" /> -->
+    <!--    <rule ref="rulesets/design.xml/AvoidSynchronizedAtMethodLevel" /> -->
     <rule ref="rulesets/design.xml/MissingBreakInSwitch" />
     <rule ref="rulesets/design.xml/UseNotifyAllInsteadOfNotify" />
     <rule ref="rulesets/design.xml/AvoidInstanceofChecksInCatchClause" />
@@ -59,7 +59,7 @@
     <rule
         ref="rulesets/design.xml/ClassWithOnlyPrivateConstructorsShouldBeFinal" />
     <rule ref="rulesets/design.xml/EmptyMethodInAbstractClassShouldBeAbstract" />
-    <rule ref="rulesets/design.xml/SingularField" />
+    <!-- <rule ref="rulesets/design.xml/SingularField" /> -->
     <rule ref="rulesets/design.xml/ReturnEmptyArrayRatherThanNull" />
     <rule ref="rulesets/design.xml/AbstractClassWithoutAnyMethod" />
     <!--
@@ -84,7 +84,7 @@
     <rule ref="rulesets/logging-java.xml/LoggerIsNotStaticFinal" />
     <rule ref="rulesets/logging-java.xml/SystemPrintln" />
     <rule ref="rulesets/logging-java.xml/AvoidPrintStackTrace" />
-    <rule ref="rulesets/strings.xml/AvoidDuplicateLiterals" />
+<!--     <rule ref="rulesets/strings.xml/AvoidDuplicateLiterals" /> -->
     <rule ref="rulesets/strings.xml/StringInstantiation" />
     <rule ref="rulesets/strings.xml/StringToString" />
     <rule ref="rulesets/strings.xml/InefficientStringBuffering" />
@@ -130,15 +130,15 @@
     <!--    <rule ref="rulesets/j2ee.xml/DoNotCallSystemExit"/>-->
     <!--    <rule ref="rulesets/j2ee.xml/StaticEJBFieldShouldBeFinal"/>-->
     <!--    <rule ref="rulesets/j2ee.xml/DoNotUseThreads"/>-->
-    <rule ref="rulesets/optimizations.xml/LocalVariableCouldBeFinal" />
+    <!--     <rule ref="rulesets/optimizations.xml/LocalVariableCouldBeFinal" /> -->
     <rule ref="rulesets/optimizations.xml/MethodArgumentCouldBeFinal" />
     <!--
         <rule
         ref="rulesets/optimizations.xml/AvoidInstantiatingObjectsInLoops" />
     -->
     <rule ref="rulesets/optimizations.xml/UseArrayListInsteadOfVector" />
-    <rule ref="rulesets/optimizations.xml/SimplifyStartsWith" />
-    <rule ref="rulesets/optimizations.xml/UseStringBufferForStringAppends" />
+	<!--     <rule ref="rulesets/optimizations.xml/SimplifyStartsWith" /> -->
+	<!-- <rule ref="rulesets/optimizations.xml/UseStringBufferForStringAppends" /> -->
     <rule ref="rulesets/optimizations.xml/UseArraysAsList" />
     <rule ref="rulesets/optimizations.xml/AvoidArrayLoops" />
     <rule ref="rulesets/optimizations.xml/UnnecessaryWrapperObjectCreation" />
@@ -166,7 +166,7 @@
     <rule ref="rulesets/basic.xml/EmptyStatementNotInLoop" />
     <rule ref="rulesets/basic.xml/BooleanInstantiation" />
     <rule ref="rulesets/basic.xml/UnnecessaryFinalModifier" />
-    <rule ref="rulesets/basic.xml/CollapsibleIfStatements" />
+    <!--  <rule ref="rulesets/basic.xml/CollapsibleIfStatements" /> -->
     <rule ref="rulesets/basic.xml/UselessOverridingMethod" />
     <rule ref="rulesets/basic.xml/ClassCastExceptionWithToArray" />
     <rule ref="rulesets/basic.xml/AvoidDecimalLiteralsInBigDecimalConstructor" />
@@ -217,9 +217,7 @@
     <rule ref="rulesets/controversial.xml/UnnecessaryParentheses" />
     <!--    <rule ref="rulesets/controversial.xml/DefaultPackage"/>-->
     <!--    <rule ref="rulesets/controversial.xml/BooleanInversion" />-->
-    <!--
-        <rule ref="rulesets/controversial.xml/DataflowAnomalyAnalysis" />
-    -->
+    <!--    <rule ref="rulesets/controversial.xml/DataflowAnomalyAnalysis" /> -->
     <!--    <rule ref="rulesets/controversial.xml/AvoidFinalLocalVariable" />-->
     <rule ref="rulesets/controversial.xml/AvoidUsingShortType" />
     <rule ref="rulesets/controversial.xml/AvoidUsingVolatile" />
@@ -227,8 +225,8 @@
     <rule ref="rulesets/controversial.xml/AvoidAccessibilityAlteration" />
     <rule ref="rulesets/controversial.xml/DoNotCallGarbageCollectionExplicitly" />
     <!--
-        <rule ref="rulesets/naming.xml/ShortVariable" /> <rule
-        ref="rulesets/naming.xml/LongVariable" />
+        <rule ref="rulesets/naming.xml/ShortVariable" />
+        <rule ref="rulesets/naming.xml/LongVariable" />
     -->
     <rule ref="rulesets/naming.xml/ShortMethodName" />
     <rule ref="rulesets/naming.xml/VariableNamingConventions" />
