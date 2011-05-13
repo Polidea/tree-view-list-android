@@ -17,54 +17,6 @@
 
     <taskdef resource="net/sourceforge/ant4hg/taskdefs/antlib.xml" classpath="build-libs/ant4hg-V0.07.jar" />
     <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="build-libs/ant-contrib-1.0b3.jar" />
-
-    <target name="delete-libraries">
-        <!-- USE WITH CARE -->
-        <echo message="delete-libraries" />
-        <delete dir="${android.library.reference.1}" failonerror="false" />
-        <delete dir="${android.library.reference.2}" failonerror="false" />
-        <delete dir="${android.library.reference.3}" failonerror="false" />
-        <delete dir="${android.library.reference.4}" failonerror="false" />
-        <delete dir="${android.library.reference.5}" failonerror="false" />
-        <delete dir="${android.library.reference.6}" failonerror="false" />
-    </target>
-
-    <target name="checkout.lib.1" if="android.library.reference.1">
-        <echo message="Checking out ${android.library.url.1}" />
-        <mkdir dir="${android.library.reference.1}" />
-        <hg cmd="clone" branch="${android.library.branch.1}" destination="${android.library.reference.1}" source="${android.library.url.1}" />
-    </target>
-
-    <target name="checkout.lib.2" if="android.library.reference.2">
-        <echo message="Checking out ${android.library.url.2}" />
-        <mkdir dir="${android.library.reference.2}" />
-        <hg cmd="clone" branch="${android.library.branch.3}" destination="${android.library.reference.2}" source="${android.library.url.2}" />
-    </target>
-    <target name="checkout.lib.3" if="android.library.reference.3">
-        <echo message="Checking out ${android.library.url.3}" />
-        <mkdir dir="${android.library.reference.3}" />
-        <hg cmd="clone" branch="${android.library.branch.3}" destination="${android.library.reference.3}" source="${android.library.url.3}" />
-    </target>
-    <target name="checkout.lib.4" if="android.library.reference.4">
-        <echo message="Checking out ${android.library.url.4}" />
-        <mkdir dir="${android.library.reference.4}" />
-        <hg cmd="clone" branch="${android.library.branch.4}" destination="${android.library.reference.4}" source="${android.library.url.4}" />
-    </target>
-    <target name="checkout.lib.5" if="android.library.reference.5">
-        <echo message="Checking out ${android.library.url.5}" />
-        <mkdir dir="${android.library.reference.5}" />
-        <hg cmd="clone" branch="${android.library.branch.5}" destination="${android.library.reference.5}" source="${android.library.url.5}" />
-    </target>
-    <target name="checkout.lib.6" if="android.library.reference.6">
-        <echo message="Checking out ${android.library.url.6}" />
-        <mkdir dir="${android.library.reference.6}" />
-        <hg cmd="clone" branch="${android.library.branch.6}" destination="${android.library.reference.6}" source="${android.library.url.6}" />
-    </target>
-
-    <target name="checkout-libraries" description="--> Checks out the libraries the project depends on" depends="checkout.lib.1, checkout.lib.2, checkout.lib.3, checkout.lib.4, checkout.lib.5, checkout.lib.6">
-
-    </target>
-
     <!-- deployment -->
 
     <property environment="env" />
@@ -118,7 +70,7 @@
         <echo message="sources-zip" />
         <zip destfile="bin/${sources.file.name}" update="false">
             <zipfileset dir=".">
-                <exclude name=".hg/**" />
+                <exclude name="**/.hg/**" />
                 <exclude name="bin/**" />
                 <exclude name="gen/**" />
                 <exclude name="doc/**" />
@@ -127,6 +79,14 @@
                 <exclude name="tmp*" />
                 <exclude name="tmpcoverage/**" />
                 <exclude name="outinstr/**" />
+                <exclude name="subrepo/*/bin/**" />
+                <exclude name="subrepo/*/gen/**" />
+                <exclude name="subrepo/*/doc/**" />
+                <exclude name="subrepo/*/javadoc/**" />
+                <exclude name="subrepo/*/ota/**" />
+                <exclude name="subrepo/*/tmp*" />
+                <exclude name="subrepo/*/tmpcoverage/**" />
+                <exclude name="subrepo/*/outinstr/**" />
             </zipfileset>
         </zip>
     </target>
@@ -135,7 +95,7 @@
         <echo message="sources-zip" />
         <zip destfile="bin/no-build-${sources.file.name}" update="false">
             <zipfileset dir=".">
-                <exclude name=".hg/**" />
+                <exclude name="**/.hg/**" />
                 <exclude name="bin/**" />
                 <exclude name="gen/**" />
                 <exclude name="doc/**" />
@@ -154,6 +114,24 @@
                 <exclude name="tmpcoverage/**" />
                 <exclude name="outinstr/**" />
                 <exclude name="build-libs/**" />
+                <exclude name="subrepo/*/bin/**" />
+                <exclude name="subrepo/*/gen/**" />
+                <exclude name="subrepo/*/doc/**" />
+                <exclude name="subrepo/*/analysis/**" />
+                <exclude name="subrepo/*/javadoc/**" />
+                <exclude name="subrepo/*/ota/**" />
+                <exclude name="subrepo/*/cert/**" />
+                <exclude name="subrepo/*/template/**" />
+                <exclude name="subrepo/*/build*.xml" />
+                <exclude name="subrepo/*/build.properties" />
+                <exclude name="subrepo/*/project.properties" />
+                <exclude name="subrepo/*/version.txt" />
+                <exclude name="subrepo/*/ChangeVersion.py" />
+                <exclude name="subrepo/*/tmp*" />
+                <exclude name="subrepo/*/Android-OTA/**" />
+                <exclude name="subrepo/*/tmpcoverage/**" />
+                <exclude name="subrepo/*/outinstr/**" />
+                <exclude name="subrepo/*/build-libs/**" />
             </zipfileset>
         </zip>
     </target>
@@ -165,30 +143,7 @@
     </target>
 
     <target name="release.montage">
-        <fileset id="montage.fileset" dir="res">
-            <include name="**/*.jpg" />
-            <include name="**/*.jpeg" />
-            <include name="**/*.exif" />
-            <include name="**/*.png" />
-            <include name="**/*.bmp" />
-            <include name="**/*.gif" />
-            <include name="**/*.tif" />
-            <include name="**/*.tiff" />
-            <include name="**/*.raw" />
-            <include name="**/*.svg" />
-            <include name="**/*.webp" />
-            <include name="**/*.JPG" />
-            <include name="**/*.JPEG" />
-            <include name="**/*.EXIF" />
-            <include name="**/*.PNG" />
-            <include name="**/*.BMP" />
-            <include name="**/*.GIF" />
-            <include name="**/*.TIF" />
-            <include name="**/*.TIFF" />
-            <include name="**/*.RAW" />
-            <include name="**/*.SVG" />
-            <include name="**/*.WEBP" />
-        </fileset>
+        <fileset id="montage.fileset" dir = "." includes="**/*.jpg,**/*.jpeg,**/*.exif,**/*.png,**/*.bmp,**/*.gif,**/*.tif,**/*.tiff,**/*.raw,**/*.svg,**/*.webp,**/*.JPG,**/*.JPEG,**/*.EXIF,**/*.PNG,**/*.BMP,**/*.GIF,**/*.TIF,**/*.TIFF,**/*.RAW,**/*.SVG,**/*.WEBP" />
         <pathconvert pathsep="${line.separator}" property="images" refid="montage.fileset" />
         <echo file="gen/montage_images.txt">${images}</echo>
         <exec executable="montage" dir="gen">
