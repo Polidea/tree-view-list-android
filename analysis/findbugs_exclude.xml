@@ -7,10 +7,10 @@
 	</Match>
 	<Match>
 		<Class name="~.*Application|.*Service" />
-		<Bug code="ST"></Bug>
+		<Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"></Bug>
 	</Match>
     <Match>
-        <Bug code="Dm"></Bug>
+        <Bug pattern="DM_EXIT"></Bug>
     </Match>
     <Match>
         <Bug code="MS"></Bug>
