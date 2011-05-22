@@ -33,7 +33,36 @@
         <fileset dir="build-libs" includes="*.jar" />
     </path>
 
-    <target name="clean" description="cleans the project">
+    <target name="check.subrepositories.exist">
+        <available file="${basedir}/subrepo" property="subrepos.exist"></available>
+    </target>
+
+    <target name="get.all.subrepositories" depends="check.subrepositories.exist" if="subrepos.exist">
+        <dirset id="subrepo.dirset" dir="subrepo">
+            <include name="*"/>
+        </dirset>
+        <pathconvert pathsep="," property="subrepos" refid="subrepo.dirset">
+            <mapper type="flatten"/>
+        </pathconvert>
+        <echo message="All subrepositories=${subrepos}"></echo>
+    </target>
+
+    <target name="clean.project">
+        <exec executable="ant">
+            <arg value="-f"/>
+            <arg value="${basedir}/subrepo/${project.dir}/build.xml"/>
+            <arg value="clean"/>
+        </exec>
+    </target>
+
+    <target name="clean.subrepositories" depends="get.all.subrepositories" if="subrepos.exist">
+        <echo message="Cleaning subrepositories of project: ${basedir}"></echo>
+        <foreach list="${subrepos}" target="clean.project" param="project.dir">
+        </foreach>
+    </target>
+
+    <target name="clean" depends="clean.subrepositories" description="Cleans the project including subrepositories">
+        <echo message="Cleaning project: ${basedir}"></echo>
         <delete dir="bin" failonerror="false" />
         <delete dir="gen" failonerror="false" />
         <delete dir="javadoc" failonerror="false" />
@@ -42,6 +71,36 @@
         <delete dir="tmpcoverage" failonerror="false" />
         <delete file="res/raw/config.properties" failonerror="false" />
         <delete file="res/raw/local_config.properties" failonerror="false" />
+    </target>
+
+    <target name="replace.android.log.with.apphance" description="Replace all android logs with apphance. Including subrepositories.">
+        <echo message="Replacing android logs with apphance's" />
+        <replace casesensitive="true" token="import android.util.Log;" value="import com.apphance.android.Log;" summary="true">
+            <fileset dir=".">
+                <include name="**/*.java"/>
+            </fileset>
+        </replace>
+    </target>
+
+    <target name="revert.project">
+        <exec executable="ant">
+            <arg value="-f"/>
+            <arg value="${basedir}/subrepo/${project.dir}/build.xml"/>
+            <arg value="revert"/>
+        </exec>
+    </target>
+
+    <target name="revert.subrepositories" depends="get.all.subrepositories" if="subrepos.exist">
+        <foreach list="${subrepos}" target="revert.project" param="project.dir">
+        </foreach>
+    </target>
+
+    <target name="revert" depends="revert.subrepositories" description="Reverts all changes done locally including subrepositories">
+        <echo message="Reverting all changes in ${basedir}" />
+        <exec executable="hg">
+            <arg value="revert" />
+            <arg value="--all" />
+        </exec>
     </target>
 
     <taskdef name="setup" classname="com.android.ant.SetupTask" classpathref="android.antlibs" />
@@ -152,7 +211,32 @@
         </copy>
     </target>
 
-    <target name="create-copy-apk-and-rename" description="Renames release apk's to the right ones depending on the release.name" if="release.name">
+    <target name="build.jar" if="jar.file.name" >
+        <property environment="env"/>
+        <property file="version.txt" prefix="app" />
+        <manifest file="gen/MANIFEST.MF" >
+            <attribute name="Specification-Title" value="${project.apk.name}"/>
+            <attribute name="Specification-Vendor" value="${project.apk.name}"/>
+            <attribute name="Implementation-Title" value="${env.RELEASE_VERSION}"/>
+            <attribute name="Implementation-Version" value="${app.current.version.code}"/>
+            <attribute name="Implementation-Vendor" value="${project.apk.name}"/>
+            <attribute name="Implementation-Vendor-Id" value="${project.apk.name}"/>
+        </manifest>
+        <jar destfile="bin/${jar.file.name}.jar" manifest="gen/MANIFEST.MF" manifestencoding="utf-8">
+            <fileset dir="bin/classes">
+                <include name="**/*.class" />
+                <exclude name="**/test/*.class" />
+                <exclude name="R*.class" />
+            </fileset>
+            <fileset dir=".">
+                <include name="res/**" />
+                <exclude name="**/*test*.*" />
+                <exclude name="res/raw/config.*" />
+            </fileset>
+        </jar>
+    </target>
+
+    <target name="create-ota-artifacts">
         <mkdir dir="ota"/>
         <mkdir dir="ota/${release.name}"/>
         <copy todir="ota/${release.name}">
@@ -160,6 +244,13 @@
                 <include name="*.apk"/>
             </fileset>
             <mapper type="glob" from="*.apk" to="${release.name}-*.apk">
+            </mapper>
+        </copy>
+        <copy todir="ota/${release.name}">
+            <fileset dir="bin">
+                <include name="*.jar"/>
+            </fileset>
+            <mapper type="glob" from="*.jar" to="${release.name}-*.jar">
             </mapper>
         </copy>
     </target>
@@ -171,7 +262,9 @@
         </antcall>
         <antcall target="build">
         </antcall>
-        <antcall target="create-copy-apk-and-rename">
+        <antcall target="build.jar">
+        </antcall>
+        <antcall target="create-ota-artifacts">
         </antcall>
     </target>
 
@@ -206,5 +299,4 @@
         <move file="${out.classes.absolute.dir}" todir="bin/classes_not_weaved" />
         <move file="${aop.output}/pl" todir="bin/classes" />
     </target>
-
 </project>

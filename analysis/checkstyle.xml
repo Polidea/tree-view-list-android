@@ -80,7 +80,7 @@
     <module name="InterfaceIsType"/>
 <!--     <module name="VisibilityModifier"/> -->
     <module name="ArrayTypeStyle"/>
-    <module name="FinalParameters"/>
+<!--     <module name="FinalParameters"/> -->
     <module name="TodoComment">
       <property name="severity" value="ignore"/>
       <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>

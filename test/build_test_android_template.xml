@@ -39,7 +39,7 @@
             <arg value="/data/data/${tested.manifest.package}/files/" />
         </exec>
         <echo>Extracting coverage report...</echo>
-        <move file="coverage.em" todir="gen"/>
+        <move file="coverage.em" todir="gen" failonerror="false"/>
         <emma>
             <report sourcepath="${tested.project.dir}/src">
                 <fileset dir="gen">

@@ -12,6 +12,7 @@
     <property name="bin.dir" location="bin" />
     <property name="ota.dir" location="ota" />
     <property name="apk.file" value="${project.apk.name}.apk" />
+    <property name="jar.file" value="${jar.file.name}.jar" />
     <property name="file.version" value="version.txt" />
     <property name="template.url.prefix" value="http://dev.polidea.pl/ext/polidea_templates/android-template/polidea_android_template/" />
 
@@ -42,7 +43,7 @@
             <arg value="-f" />
             <arg value="Release_${env.RELEASE_VERSION}_${app.current.version.code}" />
         </exec>
-        <hg cmd="push" dir="." revision="default" />
+        <hg cmd="push" dir="." />
     </target>
 
     <!-- Note! They cannot be set at the top of the file because pre-release
@@ -55,6 +56,7 @@
         <property name="full.version.name" value="${env.RELEASE_VERSION}_${app.current.version.code}" />
         <property name="versioned.dir" location="${release.subdirectory.dir}/${full.version.name}" />
         <property name="apk.file.name" value="${project.apk.name}-${full.version.name}.apk" />
+        <property name="jar.full.file.name" value="${jar.file.name}-${full.version.name}.jar" />
         <property name="javadoc.file.name" value="${project.apk.name}-javadoc-${full.version.name}.zip" />
         <property name="sources.file.name" value="${project.apk.name}-src-${full.version.name}.zip" />
     </target>
@@ -166,7 +168,18 @@
         <copy file="gen/montage_converted_images.jpg" tofile="${versioned.dir}/montage_converted_images.jpg" />
     </target>
 
-    <target name="copy.release" description="Copies release to external dir (need to have release.name property defined)" if="release.name">
+    <target name="copy.jar.release" if="jar.file.name">
+        <var name="release.full.url" value="${release.url}${versioned.dir}/${release.name}/${release.name}-${jar.full.file.name}" />
+        <mkdir dir="${versioned.dir}/${release.name}" />
+        <copy file="${ota.dir}/${release.name}/${release.name}-${jar.file}" tofile="${versioned.dir}/${release.name}/${release.name}-${jar.full.file.name}" />
+        <echo message="Jar for ${release.name}: ${release.full.url}" />
+        <echo file="${message.file}" append="true">
+            <![CDATA[
+   <li>Jar for ${release.name}: <a href="${release.full.url}">${release.full.url}</a></li>
+]]></echo>
+</target>
+
+    <target name="copy.release" depends="copy.jar.release" description="Copies release to external dir (need to have release.name property defined)" if="release.name">
         <var name="release.full.url" value="${release.url}${versioned.dir}/${release.name}/${release.name}-${apk.file.name}" />
         <mkdir dir="${versioned.dir}/${release.name}" />
         <copy file="${ota.dir}/${release.name}/${release.name}-${apk.file}" tofile="${versioned.dir}/${release.name}/${release.name}-${apk.file.name}" />
@@ -175,8 +188,8 @@
             <![CDATA[
    <li>Apk for ${release.name}: <a href="${release.full.url}">${release.full.url}</a></li>
 ]]></echo>
-
 </target>
+
 
 <target name="post-release" description="--> performs post release operations"
     depends="setup.post-release.properties, javadoc-zip, sources-zip, no-build-scripts-sources-zip, release.montage, preprocess.txt2tags.files">
