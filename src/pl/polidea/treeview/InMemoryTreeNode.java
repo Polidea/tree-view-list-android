@@ -78,8 +78,17 @@ class InMemoryTreeNode<T> {
         return children;
     }
 
-    public void clearChildren() {
+    public synchronized void clearChildren() {
         children.clear();
+        childIdListCache = null;
+    }
+
+    public synchronized void removeChild(final T child) {
+        final int childIndex = indexOf(child);
+        if (childIndex != -1) {
+            children.remove(childIndex);
+            childIdListCache = null;
+        }
     }
 
     @Override

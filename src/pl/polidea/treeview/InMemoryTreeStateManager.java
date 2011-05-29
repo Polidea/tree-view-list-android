@@ -150,20 +150,30 @@ public class InMemoryTreeStateManager<T> implements TreeStateManager<T> {
     @Override
     public synchronized void removeNodeRecursively(final T id) {
         final InMemoryTreeNode<T> node = getNodeFromTreeOrThrowAllowRoot(id);
-        removeNodeRecursively(node);
+        final boolean visibleNodeChanged = removeNodeRecursively(node);
+        final T parent = node.getParent();
+        final InMemoryTreeNode<T> parentNode = getNodeFromTreeOrThrowAllowRoot(parent);
+        parentNode.removeChild(id);
+        if (visibleNodeChanged) {
+            internalDataSetChanged();
+        }
     }
 
-    private void removeNodeRecursively(final InMemoryTreeNode<T> node) {
+    private boolean removeNodeRecursively(final InMemoryTreeNode<T> node) {
+        boolean visibleNodeChanged = false;
         for (final InMemoryTreeNode<T> child : node.getChildren()) {
-            removeNodeRecursively(child);
+            if (removeNodeRecursively(child)) {
+                visibleNodeChanged = true;
+            }
         }
         node.clearChildren();
         if (node.getId() != null) {
             allNodes.remove(node.getId());
             if (node.isVisible()) {
-                internalDataSetChanged();
+                visibleNodeChanged = true;
             }
         }
+        return visibleNodeChanged;
     }
 
     private void setChildrenVisibility(final InMemoryTreeNode<T> node,

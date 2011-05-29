@@ -15,4 +15,6 @@
     <string name="collapse_all_condesed">Collapse all</string>
     <string name="expand_menu">Expand</string>
     <string name="expand_menu_condensed">Expand</string>
+    <string name="delete_menu">Delete</string>
+    <string name="delete_menu_condensed">Delete</string>
 </resources>
