@@ -12,9 +12,11 @@ test/proguard.cfg
 test/.classpath
 test/.pmd
 test/.project
+build-libs/ant-contrib-1.0b3.jar
 build-libs/ant4hg-V0.07.jar
 build-libs/junit.jar
 build-libs/nekoconv.jar
+build-libs/xmltask.jar
 test/build-libs/nekoconv.jar
 test/build-libs/robotium-solo-2.2.jar
 test/libs/polidea_test_runner_1.2.jar
