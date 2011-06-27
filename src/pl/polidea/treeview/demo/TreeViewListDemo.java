@@ -42,7 +42,7 @@ public class TreeViewListDemo extends Activity {
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+        setContentView(R.layout.main_demo);
         for (int i = 0; i < DEMO_NODES.length; i++) {
             treeBuilder.sequentiallyAddNextNode((long) i, DEMO_NODES[i]);
         }
