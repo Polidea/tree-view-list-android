@@ -238,7 +238,7 @@
     </copy>
 </target>
 
-<target name="build.jar" if="jar.file.name">
+<target name="build.jar" if="jar.file.name" depends="compile">
     <property environment="env" />
     <property file="version.txt" prefix="app" />
     <manifest file="gen/MANIFEST.MF">
@@ -249,18 +249,30 @@
         <attribute name="Implementation-Vendor" value="${project.apk.name}" />
         <attribute name="Implementation-Vendor-Id" value="${project.apk.name}" />
     </manifest>
+    <propertyfile file="gen/manifest.properties">
+        <entry key="implementation.title" type="string" value="${env.RELEASE_VERSION}" />
+        <entry key="implementation.version" type="int" value="${app.current.version.code}" />
+    </propertyfile>
+
+    <!-- Prefix the res/ folder before putting it in the JAR to prevent name clashes with resources
+            from applications the JAR will be embedded in -->
+    <move file="res" tofile="${jar.file.name}-res" />
     <jar destfile="bin/${jar.file.name}.jar" manifest="gen/MANIFEST.MF" manifestencoding="utf-8">
+        <fileset dir="gen">
+            <include name="manifest.properties" />
+        </fileset>
         <fileset dir="bin/classes">
             <include name="**/*.class" />
             <exclude name="**/test/*.class" />
             <exclude name="R*.class" />
         </fileset>
         <fileset dir=".">
-            <include name="res/**" />
+            <include name="${jar.file.name}-res/**" />
             <exclude name="**/*test*.*" />
-            <exclude name="res/raw/config.*" />
+            <exclude name="${jar.file.name}-res/raw/config.*" />
         </fileset>
     </jar>
+    <move file="${jar.file.name}-res" tofile="res" />
 </target>
 
 <target name="create-ota-artifacts">
