@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
@@ -21,7 +22,8 @@ import android.widget.ListAdapter;
  * @param <T>
  *            class for ID of the tree
  */
-public abstract class AbstractTreeViewAdapter<T> implements ListAdapter {
+public abstract class AbstractTreeViewAdapter<T> extends BaseAdapter implements
+        ListAdapter {
     private final TreeStateManager<T> treeStateManager;
     private final int numberOfLevels;
     private final LayoutInflater layoutInflater;
@@ -68,18 +70,21 @@ public abstract class AbstractTreeViewAdapter<T> implements ListAdapter {
 
     private void calculateIndentWidth() {
         if (expandedDrawable != null) {
-            indentWidth = Math.max(getIndentWidth(), expandedDrawable.getIntrinsicWidth());
+            indentWidth = Math.max(getIndentWidth(),
+                    expandedDrawable.getIntrinsicWidth());
         }
         if (collapsedDrawable != null) {
-            indentWidth = Math.max(getIndentWidth(), collapsedDrawable.getIntrinsicWidth());
+            indentWidth = Math.max(getIndentWidth(),
+                    collapsedDrawable.getIntrinsicWidth());
         }
     }
 
-    public AbstractTreeViewAdapter(final Activity activity, final TreeStateManager<T> treeStateManager,
-            final int numberOfLevels) {
+    public AbstractTreeViewAdapter(final Activity activity,
+            final TreeStateManager<T> treeStateManager, final int numberOfLevels) {
         this.activity = activity;
         this.treeStateManager = treeStateManager;
-        this.layoutInflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.layoutInflater = (LayoutInflater) activity
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.numberOfLevels = numberOfLevels;
         this.collapsedDrawable = null;
         this.expandedDrawable = null;
@@ -146,14 +151,18 @@ public abstract class AbstractTreeViewAdapter<T> implements ListAdapter {
     }
 
     @Override
-    public final View getView(final int position, final View convertView, final ViewGroup parent) {
+    public final View getView(final int position, final View convertView,
+            final ViewGroup parent) {
         final TreeNodeInfo<T> nodeInfo = getTreeNodeInfo(position);
         if (convertView == null) {
-            final LinearLayout layout = (LinearLayout) layoutInflater.inflate(R.layout.tree_list_item_wrapper, null);
-            return populateTreeItem(layout, getNewChildView(nodeInfo), nodeInfo, true);
+            final LinearLayout layout = (LinearLayout) layoutInflater.inflate(
+                    R.layout.tree_list_item_wrapper, null);
+            return populateTreeItem(layout, getNewChildView(nodeInfo),
+                    nodeInfo, true);
         } else {
             final LinearLayout linear = (LinearLayout) convertView;
-            final FrameLayout frameLayout = (FrameLayout) linear.findViewById(R.id.treeview_list_item_frame);
+            final FrameLayout frameLayout = (FrameLayout) linear
+                    .findViewById(R.id.treeview_list_item_frame);
             final View childView = frameLayout.getChildAt(0);
             updateView(childView, nodeInfo);
             return populateTreeItem(linear, childView, nodeInfo, false);
@@ -197,23 +206,27 @@ public abstract class AbstractTreeViewAdapter<T> implements ListAdapter {
 
     private Drawable getDrawableOrDefaultBackground(final Drawable r) {
         if (r == null) {
-            return activity.getResources().getDrawable(R.drawable.list_selector_background).mutate();
+            return activity.getResources()
+                    .getDrawable(R.drawable.list_selector_background).mutate();
         } else {
             return r;
         }
     }
 
-    public final LinearLayout populateTreeItem(final LinearLayout layout, final View childView,
-            final TreeNodeInfo<T> nodeInfo, final boolean newChildView) {
+    public final LinearLayout populateTreeItem(final LinearLayout layout,
+            final View childView, final TreeNodeInfo<T> nodeInfo,
+            final boolean newChildView) {
         final Drawable individualRowDrawable = getBackgroundDrawable(nodeInfo);
         layout.setBackgroundDrawable(individualRowDrawable == null ? getDrawableOrDefaultBackground(rowBackgroundDrawable)
                 : individualRowDrawable);
         final LinearLayout.LayoutParams indicatorLayoutParams = new LinearLayout.LayoutParams(
                 calculateIndentation(nodeInfo), LayoutParams.FILL_PARENT);
-        final LinearLayout indicatorLayout = (LinearLayout) layout.findViewById(R.id.treeview_list_item_image_layout);
+        final LinearLayout indicatorLayout = (LinearLayout) layout
+                .findViewById(R.id.treeview_list_item_image_layout);
         indicatorLayout.setGravity(indicatorGravity);
         indicatorLayout.setLayoutParams(indicatorLayoutParams);
-        final ImageView image = (ImageView) layout.findViewById(R.id.treeview_list_item_image);
+        final ImageView image = (ImageView) layout
+                .findViewById(R.id.treeview_list_item_image);
         image.setImageDrawable(getDrawable(nodeInfo));
         image.setBackgroundDrawable(getDrawableOrDefaultBackground(indicatorBackgroundDrawable));
         image.setScaleType(ScaleType.CENTER);
@@ -224,9 +237,10 @@ public abstract class AbstractTreeViewAdapter<T> implements ListAdapter {
             image.setOnClickListener(null);
         }
         layout.setTag(nodeInfo.getId());
-        final FrameLayout frameLayout = (FrameLayout) layout.findViewById(R.id.treeview_list_item_frame);
-        final FrameLayout.LayoutParams childParams = new FrameLayout.LayoutParams(LayoutParams.FILL_PARENT,
-                LayoutParams.FILL_PARENT);
+        final FrameLayout frameLayout = (FrameLayout) layout
+                .findViewById(R.id.treeview_list_item_frame);
+        final FrameLayout.LayoutParams childParams = new FrameLayout.LayoutParams(
+                LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
         if (newChildView) {
             frameLayout.addView(childView, childParams);
         }
@@ -272,7 +286,8 @@ public abstract class AbstractTreeViewAdapter<T> implements ListAdapter {
         this.rowBackgroundDrawable = rowBackgroundDrawable;
     }
 
-    public void setIndicatorBackgroundDrawable(final Drawable indicatorBackgroundDrawable) {
+    public void setIndicatorBackgroundDrawable(
+            final Drawable indicatorBackgroundDrawable) {
         this.indicatorBackgroundDrawable = indicatorBackgroundDrawable;
     }
 
