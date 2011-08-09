@@ -150,13 +150,17 @@ public abstract class AbstractTreeViewAdapter<T> extends BaseAdapter implements
         return true;
     }
 
+    protected int getTreeListItemWrapperId() {
+        return R.layout.tree_list_item_wrapper;
+    }
+
     @Override
     public final View getView(final int position, final View convertView,
             final ViewGroup parent) {
         final TreeNodeInfo<T> nodeInfo = getTreeNodeInfo(position);
         if (convertView == null) {
             final LinearLayout layout = (LinearLayout) layoutInflater.inflate(
-                    R.layout.tree_list_item_wrapper, null);
+                    getTreeListItemWrapperId(), null);
             return populateTreeItem(layout, getNewChildView(nodeInfo),
                     nodeInfo, true);
         } else {
