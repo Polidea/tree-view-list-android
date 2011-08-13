@@ -1,5 +1,6 @@
 package pl.polidea.treeview;
 
+import java.io.Serializable;
 import java.util.List;
 
 import android.database.DataSetObserver;
@@ -11,7 +12,7 @@ import android.database.DataSetObserver;
  * @param <T>
  *            type of the identifier for nodes in the tree
  */
-public interface TreeStateManager<T> {
+public interface TreeStateManager<T> extends Serializable {
 
     /**
      * Returns array of integers showing the location of the node in hierarchy.

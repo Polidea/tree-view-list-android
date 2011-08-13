@@ -1,5 +1,6 @@
 package pl.polidea.treeview;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -9,7 +10,8 @@ import java.util.List;
  * @param <T>
  *            type of the identifier used by the tree
  */
-class InMemoryTreeNode<T> {
+class InMemoryTreeNode<T> implements Serializable {
+    private static final long serialVersionUID = 1L;
     private final T id;
     private final T parent;
     private final int level;

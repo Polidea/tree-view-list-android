@@ -18,13 +18,14 @@ import android.database.DataSetObserver;
  *            type of identifier
  */
 public class InMemoryTreeStateManager<T> implements TreeStateManager<T> {
+    private static final long serialVersionUID = 1L;
     private final Map<T, InMemoryTreeNode<T>> allNodes = new HashMap<T, InMemoryTreeNode<T>>();
     private final InMemoryTreeNode<T> topSentinel = new InMemoryTreeNode<T>(
             null, null, -1, true);
-    private List<T> visibleListCache = null; // lasy initialised
-    private List<T> unmodifiableVisibleList = null;
+    private transient List<T> visibleListCache = null; // lasy initialised
+    private transient List<T> unmodifiableVisibleList = null;
     private boolean visibleByDefault = true;
-    private final Set<DataSetObserver> observers = new HashSet<DataSetObserver>();
+    private final transient Set<DataSetObserver> observers = new HashSet<DataSetObserver>();
 
     private synchronized void internalDataSetChanged() {
         visibleListCache = null;
