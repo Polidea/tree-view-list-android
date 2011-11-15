@@ -53,7 +53,7 @@ public class TreeViewListDemo extends Activity {
         boolean newCollapsible;
         if (savedInstanceState == null) {
             manager = new InMemoryTreeStateManager<Long>();
-            TreeBuilder<Long> treeBuilder = new TreeBuilder<Long>(manager);
+            final TreeBuilder<Long> treeBuilder = new TreeBuilder<Long>(manager);
             for (int i = 0; i < DEMO_NODES.length; i++) {
                 treeBuilder.sequentiallyAddNextNode((long) i, DEMO_NODES[i]);
             }
@@ -79,14 +79,14 @@ public class TreeViewListDemo extends Activity {
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(final Bundle outState) {
         outState.putSerializable("treeManager", manager);
         outState.putSerializable("treeType", treeType);
         outState.putBoolean("collapsible", this.collapsible);
         super.onSaveInstanceState(outState);
     }
 
-    protected final void setTreeAdapter(TreeType newTreeType) {
+    protected final void setTreeAdapter(final TreeType newTreeType) {
         this.treeType = newTreeType;
         switch (newTreeType) {
         case SIMPLE:
@@ -100,7 +100,7 @@ public class TreeViewListDemo extends Activity {
         }
     }
 
-    protected final void setCollapsible(boolean newCollapsible) {
+    protected final void setCollapsible(final boolean newCollapsible) {
         this.collapsible = newCollapsible;
         treeView.setCollapsible(this.collapsible);
     }
@@ -130,23 +130,17 @@ public class TreeViewListDemo extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
-        switch (item.getItemId()) {
-        case R.id.simple_menu_item:
+        if (item.getItemId() == R.id.simple_menu_item) {
             setTreeAdapter(TreeType.SIMPLE);
-            break;
-        case R.id.fancy_menu_item:
+        } else if (item.getItemId() == R.id.fancy_menu_item) {
             setTreeAdapter(TreeType.FANCY);
-            break;
-        case R.id.collapsible_menu_item:
+        } else if (item.getItemId() == R.id.collapsible_menu_item) {
             setCollapsible(!this.collapsible);
-            break;
-        case R.id.expand_all_menu_item:
+        } else if (item.getItemId() == R.id.expand_all_menu_item) {
             manager.expandEverythingBelow(null);
-            break;
-        case R.id.collapse_all_menu_item:
+        } else if (item.getItemId() == R.id.collapse_all_menu_item) {
             manager.collapseChildren(null);
-            break;
-        default:
+        } else {
             return false;
         }
         return true;
@@ -180,20 +174,19 @@ public class TreeViewListDemo extends Activity {
         final AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
                 .getMenuInfo();
         final long id = info.id;
-        switch (item.getItemId()) {
-        case R.id.context_menu_collapse:
+        if (item.getItemId() == R.id.context_menu_collapse) {
             manager.collapseChildren(id);
             return true;
-        case R.id.context_menu_expand_all:
+        } else if (item.getItemId() == R.id.context_menu_expand_all) {
             manager.expandEverythingBelow(id);
             return true;
-        case R.id.context_menu_expand_item:
+        } else if (item.getItemId() == R.id.context_menu_expand_item) {
             manager.expandDirectChildren(id);
             return true;
-        case R.id.context_menu_delete:
+        } else if (item.getItemId() == R.id.context_menu_delete) {
             manager.removeNodeRecursively(id);
             return true;
-        default:
+        } else {
             return super.onContextItemSelected(item);
         }
     }
