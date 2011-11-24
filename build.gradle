@@ -1,11 +1,16 @@
 buildscript {
-    def localMavenRepo = 'file://' + new File(System.getProperty('user.home'), '.m2/repository').absolutePath
     repositories {
-        org.apache.ivy.util.url.CredentialsStore.INSTANCE.addCredentials(
-            "Artifactory Realm", "dev.polidea.pl", "${polideaRepoUsername}", "${polideaRepoPassword}")
-        mavenRepo url: localMavenRepo
-        mavenRepo url: uri('https://dev.polidea.pl/artifactory/plugins-snapshot-local')
-        mavenRepo url: uri('https://dev.polidea.pl/artifactory/plugins-release-local')
+        maven {
+             url 'file://' + new File(System.getProperty('user.home'), '.m2/repository').absolutePath
+        }
+        maven {
+           name 'Polidea repository'
+           credentials {
+             username = polideaRepoUsername
+             password = polideaRepoPassword
+           }
+           url 'https://dev.polidea.pl/artifactory/plugins-snapshot-local'
+        }
         mavenCentral()
     }
     dependencies {
