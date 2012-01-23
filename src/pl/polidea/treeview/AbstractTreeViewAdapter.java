@@ -256,7 +256,7 @@ public abstract class AbstractTreeViewAdapter<T> extends BaseAdapter implements
         return getIndentWidth() * (nodeInfo.getLevel() + (collapsible ? 1 : 0));
     }
 
-    private Drawable getDrawable(final TreeNodeInfo<T> nodeInfo) {
+    protected Drawable getDrawable(final TreeNodeInfo<T> nodeInfo) {
         if (!nodeInfo.isWithChildren() || !collapsible) {
             return getDrawableOrDefaultBackground(indicatorBackgroundDrawable);
         }
