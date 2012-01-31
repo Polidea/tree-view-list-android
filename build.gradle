@@ -1,28 +1,25 @@
 buildscript {
     repositories {
-        maven {
-             url 'file://' + new File(System.getProperty('user.home'), '.m2/repository').absolutePath
-        }
-        maven {
-           name 'Polidea repository'
-           credentials {
-             username = polideaRepoUsername
-             password = polideaRepoPassword
-           }
-           url 'https://dev.polidea.pl/artifactory/plugins-snapshot-local'
-        }
+        mavenLocal()
         mavenCentral()
+        maven {
+            url "https://dev.polidea.pl/artifactory/sonatype-snapshots"
+        }
     }
     dependencies {
-        classpath ('pl.polidea.gradle:PolideaBuildPlugin:4.1.0-SNAPSHOT') {
+        classpath ('com.apphance.ameba:Ameba:0.99.1-SNAPSHOT') {
             changing = true
         }
     }
+    configurations.all {
+        resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+    }
 }
 
-apply plugin: 'polidea-project-configuration'
-apply plugin: 'polidea-mercurial'
-apply plugin: 'polidea-android-build'
-apply plugin: 'polidea-android-analysis'
-apply plugin: 'polidea-android-apphance'
-apply plugin: 'polidea-android-reports'
+apply plugin: 'ameba-project-configuration'
+apply plugin: 'ameba-mercurial'
+apply plugin: 'ameba-android-build'
+//apply plugin: 'ameba-android-apphance'
+apply plugin: 'ameba-android-analysis'
+//apply plugin: 'ameba-android-test'
+apply plugin: 'ameba-android-reports'
