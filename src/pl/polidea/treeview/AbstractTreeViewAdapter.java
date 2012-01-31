@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.database.DataSetObserver;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -24,6 +25,8 @@ import android.widget.ListAdapter;
  */
 public abstract class AbstractTreeViewAdapter<T> extends BaseAdapter implements
         ListAdapter {
+    private static final String TAG = AbstractTreeViewAdapter.class
+            .getSimpleName();
     private final TreeStateManager<T> treeStateManager;
     private final int numberOfLevels;
     private final LayoutInflater layoutInflater;
@@ -157,13 +160,17 @@ public abstract class AbstractTreeViewAdapter<T> extends BaseAdapter implements
     @Override
     public final View getView(final int position, final View convertView,
             final ViewGroup parent) {
+        Log.d(TAG, "Creating a view based on " + convertView
+                + " with position " + position);
         final TreeNodeInfo<T> nodeInfo = getTreeNodeInfo(position);
         if (convertView == null) {
+            Log.d(TAG, "Creating the view a new");
             final LinearLayout layout = (LinearLayout) layoutInflater.inflate(
                     getTreeListItemWrapperId(), null);
             return populateTreeItem(layout, getNewChildView(nodeInfo),
                     nodeInfo, true);
         } else {
+            Log.d(TAG, "Reusing the view");
             final LinearLayout linear = (LinearLayout) convertView;
             final FrameLayout frameLayout = (FrameLayout) linear
                     .findViewById(R.id.treeview_list_item_frame);

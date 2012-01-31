@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import android.database.DataSetObserver;
+import android.util.Log;
 
 /**
  * In-memory manager of tree state.
@@ -18,6 +19,8 @@ import android.database.DataSetObserver;
  *            type of identifier
  */
 public class InMemoryTreeStateManager<T> implements TreeStateManager<T> {
+    private static final String TAG = InMemoryTreeStateManager.class
+            .getSimpleName();
     private static final long serialVersionUID = 1L;
     private final Map<T, InMemoryTreeNode<T>> allNodes = new HashMap<T, InMemoryTreeNode<T>>();
     private final InMemoryTreeNode<T> topSentinel = new InMemoryTreeNode<T>(
@@ -189,6 +192,7 @@ public class InMemoryTreeStateManager<T> implements TreeStateManager<T> {
 
     @Override
     public synchronized void expandDirectChildren(final T id) {
+        Log.d(TAG, "Expanding direct children of " + id);
         final InMemoryTreeNode<T> node = getNodeFromTreeOrThrowAllowRoot(id);
         setChildrenVisibility(node, true, false);
         internalDataSetChanged();
@@ -196,6 +200,7 @@ public class InMemoryTreeStateManager<T> implements TreeStateManager<T> {
 
     @Override
     public synchronized void expandEverythingBelow(final T id) {
+        Log.d(TAG, "Expanding all children below " + id);
         final InMemoryTreeNode<T> node = getNodeFromTreeOrThrowAllowRoot(id);
         setChildrenVisibility(node, true, true);
         internalDataSetChanged();
