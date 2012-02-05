@@ -1,18 +1,9 @@
 buildscript {
     repositories {
-        mavenLocal()
         mavenCentral()
-        maven {
-            url "https://dev.polidea.pl/artifactory/sonatype-snapshots"
-        }
     }
     dependencies {
-        classpath ('com.apphance.ameba:Ameba:0.99.2.6-SNAPSHOT') {
-            changing = true
-        }
-    }
-    configurations.all {
-        resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+        classpath ('com.apphance.ameba:Ameba:0.99.2.13')
     }
 }
 
