@@ -4,9 +4,10 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath ('com.apphance.ameba:Ameba:0.99.3-SNAPSHOT')
+        classpath ('com.apphance.ameba:Ameba:0.99.3')
     }
 }
+
 
 
 apply plugin: 'ameba-project-configuration'
