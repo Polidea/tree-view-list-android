@@ -4,9 +4,10 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath ('com.apphance.ameba:Ameba:0.99.4-SNAPSHOT')
+        classpath ('com.apphance.ameba:Ameba:0.99.4')
     }
 }
+
 
 
 
@@ -21,3 +22,4 @@ apply plugin: 'ameba-android-release'
 apply plugin: 'ameba-android-analysis'
 //apply plugin: 'ameba-android-test'
 //apply plugin: 'ameba-android-jarlibrary'
+apply from: 'http://dev.polidea.pl/ext/Ameba/polidea_conventions.gradle'
