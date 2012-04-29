@@ -14,10 +14,6 @@ buildscript {
     }
 }
 
-
-
-
-
 apply plugin: 'ameba-project-configuration'
 apply plugin: 'ameba-mercurial'
 //apply plugin: 'ameba-git'
@@ -28,5 +24,4 @@ apply plugin: 'ameba-android-release'
 apply plugin: 'ameba-android-analysis'
 //apply plugin: 'ameba-android-test'
 //apply plugin: 'ameba-android-jarlibrary'
-apply from: 'http://dev.polidea.pl/ext/Ameba/polidea_conventions.gradle'
 apply from: 'http://dev.polidea.pl/ext/Ameba/polidea_conventions.gradle'
