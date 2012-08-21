@@ -244,6 +244,7 @@ public class InMemoryTreeStateManager<T> implements TreeStateManager<T> {
             if (child.getId().equals(id)) {
                 return previousSibling;
             }
+            previousSibling = child.getId();
         }
         return null;
     }
