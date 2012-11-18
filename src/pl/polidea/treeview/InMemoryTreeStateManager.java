@@ -239,7 +239,7 @@ public class InMemoryTreeStateManager<T> implements TreeStateManager<T> {
     public synchronized T getPreviousSibling(final T id) {
         final T parent = getParent(id);
         final InMemoryTreeNode<T> parentNode = getNodeFromTreeOrThrowAllowRoot(parent);
-        final T previousSibling = null;
+        T previousSibling = null;
         for (final InMemoryTreeNode<T> child : parentNode.getChildren()) {
             if (child.getId().equals(id)) {
                 return previousSibling;
