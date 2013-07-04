@@ -63,8 +63,14 @@ public class TreeViewListDemo extends Activity {
         } else {
             manager = (TreeStateManager<Long>) savedInstanceState
                     .getSerializable("treeManager");
+            if (manager == null) {
+                manager = new InMemoryTreeStateManager<Long>();
+            }
             newTreeType = (TreeType) savedInstanceState
                     .getSerializable("treeType");
+            if (newTreeType == null) {
+                newTreeType = TreeType.SIMPLE;
+            }
             newCollapsible = savedInstanceState.getBoolean("collapsible");
         }
         setContentView(R.layout.main_demo);
